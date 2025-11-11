@@ -1,10 +1,14 @@
 # Environment variables (contains secrets)
 .env
 
-# Backup files
-*.sql
+# Backup files (but not init scripts)
+backups/*.sql
+/*.sql
 *.dump
 *.backup
+
+# But DO track init scripts
+!init-scripts/*.sql
 
 # Docker volumes (data is persistent)
 data/
