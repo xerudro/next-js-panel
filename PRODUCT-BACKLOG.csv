@@ -1,0 +1,53 @@
+Story ID,Title,User Type,Priority,Story Points,Status,Phase,Epic,Dependencies,Acceptance Criteria Count
+TECH-001,CI/CD Pipeline Setup,Development Team,Critical,8,Ready,Phase 1,Infrastructure,None,8
+TECH-002,Database Schema & Migrations,Development Team,Critical,13,Ready,Phase 1,Infrastructure,None,8
+TECH-003,API Gateway Architecture,Development Team,Critical,13,Ready,Phase 1,Infrastructure,TECH-002,10
+TECH-004,Authentication System,Development Team,Critical,13,Ready,Phase 1,Infrastructure,"TECH-002, TECH-003",11
+TECH-005,Monitoring & Observability,Development Team,High,8,Backlog,Phase 2,Infrastructure,TECH-003,10
+TECH-006,Testing Infrastructure,Development Team,High,8,Backlog,Phase 2,Infrastructure,TECH-001,10
+TECH-007,API Documentation,Developer,High,5,Backlog,Phase 2,Infrastructure,TECH-003,10
+SA-001,Platform Dashboard Overview,Super Admin,Critical,8,Backlog,Phase 1,Admin Dashboard,"TECH-003, TECH-004",9
+SA-002,User Management,Super Admin,Critical,13,Backlog,Phase 1,User Management,TECH-004,10
+SA-003,Server Provisioning,Super Admin,High,13,Backlog,Phase 2,Infrastructure,SA-002,11
+SA-004,Billing Configuration,Super Admin,Critical,8,Backlog,Phase 1,Billing,TECH-004,11
+SA-005,Security Monitoring & Alerts,Super Admin,Critical,13,Backlog,Phase 2,Security,TECH-005,10
+SA-006,Package Management,Super Admin,Critical,13,Backlog,Phase 1,Hosting,TECH-004,12
+SA-007,Revenue Analytics,Super Admin,High,8,Backlog,Phase 3,Billing,SA-004,12
+SA-008,System Configuration,Super Admin,High,8,Backlog,Phase 2,Admin,TECH-004,12
+SA-009,Backup Management,Super Admin,Critical,13,Backlog,Phase 3,Infrastructure,SA-003,12
+SA-010,Multi-Server Management,Super Admin,High,13,Backlog,Phase 4,Infrastructure,SA-003,12
+RE-001,Reseller Dashboard,Reseller,Critical,8,Backlog,Phase 1,Reseller Portal,"TECH-003, TECH-004",10
+RE-002,Customer Management,Reseller,Critical,13,Backlog,Phase 1,Reseller Portal,"SA-002, TECH-004",12
+RE-003,White-Label Branding,Reseller,High,8,Backlog,Phase 2,Reseller Portal,RE-001,12
+RE-004,Custom Pricing,Reseller,High,8,Backlog,Phase 2,Billing,"SA-006, RE-002",10
+RE-005,Invoice Management,Reseller,Critical,13,Backlog,Phase 1,Billing,SA-004,12
+RE-006,Support Ticket System,Reseller,High,13,Backlog,Phase 2,Support,RE-002,13
+RE-007,Resource Allocation,Reseller,High,5,Backlog,Phase 2,Reseller Portal,RE-001,10
+RE-008,Commission Tracking,Reseller,Medium,5,Backlog,Phase 3,Billing,RE-005,9
+RE-009,Bulk Operations,Reseller,Medium,5,Backlog,Phase 4,Reseller Portal,RE-002,10
+RE-010,Reports & Analytics,Reseller,Medium,8,Backlog,Phase 3,Analytics,RE-001,10
+CU-001,Customer Dashboard,Customer,Critical,8,Backlog,Phase 1,Customer Portal,"TECH-003, TECH-004",10
+CU-002,Website Management,Customer,Critical,13,Backlog,Phase 1,Hosting,"SA-006, CU-001",10
+CU-003,File Manager,Customer,High,13,Backlog,Phase 2,Hosting,CU-002,15
+CU-004,Database Management,Customer,High,8,Backlog,Phase 2,Hosting,CU-002,13
+CU-005,Email Account Management,Customer,High,13,Backlog,Phase 2,Email,CU-002,13
+CU-006,SSL Certificate Management,Customer,High,8,Backlog,Phase 2,Security,CU-002,11
+CU-007,Domain Management,Customer,High,8,Backlog,Phase 2,DNS,CU-002,12
+CU-008,Backup & Restore,Customer,Critical,13,Backlog,Phase 1,Hosting,CU-002,11
+CU-009,Billing & Invoices,Customer,Critical,13,Backlog,Phase 1,Billing,SA-004,13
+CU-010,Support Tickets,Customer,High,13,Backlog,Phase 2,Support,CU-001,13
+CU-011,Account Settings,Customer,High,8,Backlog,Phase 2,Customer Portal,TECH-004,13
+CU-012,One-Click App Installer,Customer,High,13,Backlog,Phase 3,Hosting,CU-002,12
+CU-013,Website Performance Metrics,Customer,Medium,8,Backlog,Phase 3,Analytics,CU-002,11
+CU-014,Staging Environment,Customer,Medium,13,Backlog,Phase 3,Hosting,CU-002,11
+CU-015,Git Integration,Customer,Medium,13,Backlog,Phase 4,Hosting,CU-002,11
+TU-001,SSH Access,Technical User,High,8,Backlog,Phase 2,Developer Tools,CU-002,14
+TU-002,SFTP Access,Technical User,High,5,Backlog,Phase 2,Developer Tools,TU-001,10
+TU-003,PHP Configuration,Technical User,High,8,Backlog,Phase 2,Developer Tools,CU-002,12
+TU-004,Cron Jobs,Technical User,High,8,Backlog,Phase 2,Developer Tools,TU-001,12
+TU-005,Environment Variables,Technical User,Medium,5,Backlog,Phase 3,Developer Tools,CU-002,10
+TU-006,Application Logs,Technical User,High,8,Backlog,Phase 2,Developer Tools,CU-002,11
+TU-007,Database CLI Access,Technical User,Medium,5,Backlog,Phase 3,Developer Tools,TU-001,8
+TU-008,Node.js Application Deployment,Technical User,Medium,13,Backlog,Phase 3,Developer Tools,CU-002,11
+TU-009,Python Application Deployment,Technical User,Medium,13,Backlog,Phase 3,Developer Tools,CU-002,11
+TU-010,Custom Domain with Subdomain,Technical User,Medium,8,Backlog,Phase 3,DNS,CU-007,9
