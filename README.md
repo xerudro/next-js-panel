@@ -297,7 +297,7 @@ This is currently a solo developer project, but contributions are welcome!
 
 ## 📂 Repository Structure
 
-```
+```text
 next-js-panel/
 ├── homelab/                    # Docker Compose development environment
 │   ├── docker-compose.yml      # 7 services (PostgreSQL, Redis, n8n, etc.)
@@ -330,23 +330,23 @@ next-js-panel/
 ## 🎓 Learning Resources
 
 ### Next.js & React
-- [Next.js 15 Documentation](https://nextjs.org/docs)
-- [React 19 Documentation](https://react.dev)
-- [Server Components Guide](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
+- [Next.js 15 Documentation]([https://nextjs.org/docs](https://nextjs.org/docs))
+- [React 19 Documentation]([https://react.dev](https://react.dev))
+- [Server Components Guide]([https://nextjs.org/docs/app/building-your-application/rendering/server-components](https://nextjs.org/docs/app/building-your-application/rendering/server-components))
 
 ### RUST
-- [The Rust Book](https://doc.rust-lang.org/book/)
-- [Actix-web Documentation](https://actix.rs)
-- [Axum Documentation](https://docs.rs/axum/latest/axum/)
+- [The Rust Book]([https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/))
+- [Actix-web Documentation]([https://actix.rs](https://actix.rs))
+- [Axum Documentation]([https://docs.rs/axum/latest/axum/](https://docs.rs/axum/latest/axum/))
 
 ### Go
-- [Go Documentation](https://go.dev/doc/)
-- [Fiber Framework](https://docs.gofiber.io)
+- [Go Documentation]([https://go.dev/doc/](https://go.dev/doc/))
+- [Fiber Framework]([https://docs.gofiber.io](https://docs.gofiber.io))
 
 ### DevOps
-- [Docker Documentation](https://docs.docker.com)
-- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
-- [Prometheus Documentation](https://prometheus.io/docs/)
+- [Docker Documentation]([https://docs.docker.com](https://docs.docker.com))
+- [PostgreSQL Documentation]([https://www.postgresql.org/docs/](https://www.postgresql.org/docs/))
+- [Prometheus Documentation]([https://prometheus.io/docs/](https://prometheus.io/docs/))
 
 ---
 
@@ -359,7 +359,7 @@ This project is proprietary. All rights reserved.
 ## 📧 Contact
 
 For questions or feedback:
-- **GitHub Issues**: https://github.com/xerudro/next-js-panel/issues
+- **GitHub Issues**: [https://github.com/xerudro/next-js-panel/issues](https://github.com/xerudro/next-js-panel/issues)
 - **Email**: [Your email here]
 
 ---

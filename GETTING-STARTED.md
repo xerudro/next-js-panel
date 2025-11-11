@@ -129,7 +129,7 @@ Start by reading these documents in order:
 - `homelab/docker-compose.yml` - All development services
 
 **Documentation Directory**:
-```
+```text
 docs/
 ├── Unified_Hosting_Platform_PRD.md           # Product requirements
 ├── USER-STORIES.md                            # User stories
@@ -283,50 +283,50 @@ docker system prune -a
 - [ ] Review USER-STORIES.md
 
 **Day 2**: Technology stack
-- [ ] Next.js 16 documentation: https://nextjs.org/docs
-- [ ] React 19 features: https://react.dev
-- [ ] Server Components: https://nextjs.org/docs/app/building-your-application/rendering/server-components
+- [ ] Next.js 16 documentation: [https://nextjs.org/docs](https://nextjs.org/docs)
+- [ ] React 19 features: [https://react.dev](https://react.dev)
+- [ ] Server Components: [https://nextjs.org/docs/app/building-your-application/rendering/server-components](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
 
 **Day 3**: Backend technologies
-- [ ] RUST basics: https://doc.rust-lang.org/book/
-- [ ] Actix-web: https://actix.rs
-- [ ] Go basics: https://go.dev/tour/
+- [ ] RUST basics: [https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/)
+- [ ] Actix-web: [https://actix.rs](https://actix.rs)
+- [ ] Go basics: [https://go.dev/tour/](https://go.dev/tour/)
 
 **Day 4**: Database and infrastructure
-- [ ] PostgreSQL tutorial: https://www.postgresql.org/docs/
-- [ ] Docker Compose: https://docs.docker.com/compose/
-- [ ] NGINX basics: https://nginx.org/en/docs/
+- [ ] PostgreSQL tutorial: [https://www.postgresql.org/docs/](https://www.postgresql.org/docs/)
+- [ ] Docker Compose: [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
+- [ ] NGINX basics: [https://nginx.org/en/docs/](https://nginx.org/en/docs/)
 
 **Day 5**: Development workflow
-- [ ] GitHub Actions: https://docs.github.com/en/actions
+- [ ] GitHub Actions: [https://docs.github.com/en/actions](https://docs.github.com/en/actions)
 - [ ] Git workflow best practices
 - [ ] Testing strategies
 
 ### Resources by Technology
 
 **Next.js & React**:
-- [Next.js 15 Docs](https://nextjs.org/docs)
-- [React 19 Docs](https://react.dev)
-- [Tailwind CSS](https://tailwindcss.com/docs)
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
+- [Next.js 15 Docs]([https://nextjs.org/docs](https://nextjs.org/docs))
+- [React 19 Docs]([https://react.dev](https://react.dev))
+- [Tailwind CSS]([https://tailwindcss.com/docs](https://tailwindcss.com/docs))
+- [TypeScript Handbook]([https://www.typescriptlang.org/docs/](https://www.typescriptlang.org/docs/))
 
 **RUST**:
-- [The Rust Book](https://doc.rust-lang.org/book/)
-- [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
-- [Actix Web Guide](https://actix.rs/docs/)
-- [SQLx Documentation](https://docs.rs/sqlx/latest/sqlx/)
+- [The Rust Book]([https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/))
+- [Rust by Example]([https://doc.rust-lang.org/rust-by-example/](https://doc.rust-lang.org/rust-by-example/))
+- [Actix Web Guide]([https://actix.rs/docs/](https://actix.rs/docs/))
+- [SQLx Documentation]([https://docs.rs/sqlx/latest/sqlx/](https://docs.rs/sqlx/latest/sqlx/))
 
 **Go**:
-- [Go Tour](https://go.dev/tour/)
-- [Effective Go](https://go.dev/doc/effective_go)
-- [Fiber Framework](https://docs.gofiber.io)
-- [GORM ORM](https://gorm.io/docs/)
+- [Go Tour]([https://go.dev/tour/](https://go.dev/tour/))
+- [Effective Go]([https://go.dev/doc/effective_go](https://go.dev/doc/effective_go))
+- [Fiber Framework]([https://docs.gofiber.io](https://docs.gofiber.io))
+- [GORM ORM]([https://gorm.io/docs/](https://gorm.io/docs/))
 
 **DevOps**:
-- [Docker Documentation](https://docs.docker.com)
-- [PostgreSQL Docs](https://www.postgresql.org/docs/)
-- [n8n Documentation](https://docs.n8n.io/)
-- [Prometheus Docs](https://prometheus.io/docs/)
+- [Docker Documentation]([https://docs.docker.com](https://docs.docker.com))
+- [PostgreSQL Docs]([https://www.postgresql.org/docs/](https://www.postgresql.org/docs/))
+- [n8n Documentation]([https://docs.n8n.io/](https://docs.n8n.io/))
+- [Prometheus Docs]([https://prometheus.io/docs/](https://prometheus.io/docs/))
 
 ---
 
@@ -471,14 +471,14 @@ docker volume prune
 
 ### Community Resources
 
-- **Next.js Discord**: https://nextjs.org/discord
-- **Rust Users Forum**: https://users.rust-lang.org/
-- **Go Forum**: https://forum.golangbridge.org/
+- **Next.js Discord**: [https://nextjs.org/discord](https://nextjs.org/discord)
+- **Rust Users Forum**: [https://users.rust-lang.org/](https://users.rust-lang.org/)
+- **Go Forum**: [https://forum.golangbridge.org/](https://forum.golangbridge.org/)
 - **Stack Overflow**: Tag your questions appropriately
 
 ### Project Issues
 
-Create a GitHub issue: https://github.com/xerudro/next-js-panel/issues
+Create a GitHub issue: [https://github.com/xerudro/next-js-panel/issues](https://github.com/xerudro/next-js-panel/issues)
 
 ---
 
