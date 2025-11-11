@@ -32,7 +32,23 @@ CREATE TABLE IF NOT EXISTS schema_migrations (
 -- Log the initialization
 INSERT INTO schema_migrations (version) VALUES ('00000000000000_init');
 
--- Create audit log function for tracking changes
+-- Create audit_log table first (before the function that references it)
+CREATE TABLE IF NOT EXISTS audit_log (
+    id SERIAL PRIMARY KEY,
+    table_name VARCHAR(255) NOT NULL,
+    operation VARCHAR(10) NOT NULL,
+    old_data JSONB,
+    new_data JSONB,
+    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    user_id UUID
+);
+
+-- Create indexes for faster audit log queries
+CREATE INDEX IF NOT EXISTS idx_audit_log_table_name ON audit_log(table_name);
+CREATE INDEX IF NOT EXISTS idx_audit_log_timestamp ON audit_log(timestamp);
+CREATE INDEX IF NOT EXISTS idx_audit_log_user_id ON audit_log(user_id);
+
+-- Create audit log function for tracking changes (after table exists)
 CREATE OR REPLACE FUNCTION audit_trigger_func()
 RETURNS TRIGGER AS $$
 BEGIN
@@ -52,22 +68,6 @@ BEGIN
     RETURN NULL;
 END;
 $$ LANGUAGE plpgsql;
-
--- Create audit_log table (initially)
-CREATE TABLE IF NOT EXISTS audit_log (
-    id SERIAL PRIMARY KEY,
-    table_name VARCHAR(255) NOT NULL,
-    operation VARCHAR(10) NOT NULL,
-    old_data JSONB,
-    new_data JSONB,
-    timestamp TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
-    user_id UUID
-);
-
--- Create index for faster audit log queries
-CREATE INDEX IF NOT EXISTS idx_audit_log_table_name ON audit_log(table_name);
-CREATE INDEX IF NOT EXISTS idx_audit_log_timestamp ON audit_log(timestamp);
-CREATE INDEX IF NOT EXISTS idx_audit_log_user_id ON audit_log(user_id);
 
 -- Output success message
 \echo 'Database initialization completed successfully!'
