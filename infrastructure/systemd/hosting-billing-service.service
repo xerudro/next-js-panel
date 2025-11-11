@@ -1,0 +1,45 @@
+[Unit]
+Description=Hosting Panel Billing Service (Go)
+Documentation=https://github.com/xerudro/next-js-panel
+After=network-online.target postgresql.service redis.service
+Wants=network-online.target
+Requires=postgresql.service redis.service
+
+[Service]
+Type=simple
+User=hosting
+Group=hosting
+WorkingDirectory=/opt/hosting-panel/services/billing-service
+
+# Environment variables
+Environment="GO_ENV=production"
+EnvironmentFile=/opt/hosting-panel/services/billing-service/.env
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/hosting-panel/services/billing-service/logs
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=4096
+
+# Start the service
+ExecStart=/opt/hosting-panel/services/billing-service/billing-service
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=always
+RestartSec=5
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hosting-billing-service
+
+[Install]
+WantedBy=multi-user.target

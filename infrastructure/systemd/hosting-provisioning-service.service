@@ -1,0 +1,48 @@
+[Unit]
+Description=Hosting Panel Provisioning Service (Go)
+Documentation=https://github.com/xerudro/next-js-panel
+After=network-online.target postgresql.service
+Wants=network-online.target
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=hosting
+Group=hosting
+WorkingDirectory=/opt/hosting-panel/services/provisioning-service
+
+# Environment variables
+Environment="GO_ENV=production"
+EnvironmentFile=/opt/hosting-panel/services/provisioning-service/.env
+
+# Security hardening - More permissive since this service manages NGINX/PHP
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=false
+ProtectHome=false
+ReadWritePaths=/etc/nginx /etc/php /var/www /opt/hosting-panel/services/provisioning-service/logs
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=4096
+
+# Capabilities needed for provisioning (NGINX, PHP-FPM, SSH)
+AmbientCapabilities=CAP_DAC_OVERRIDE CAP_CHOWN CAP_FOWNER
+
+# Start the service
+ExecStart=/opt/hosting-panel/services/provisioning-service/provisioning-service
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=always
+RestartSec=5
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hosting-provisioning-service
+
+[Install]
+WantedBy=multi-user.target

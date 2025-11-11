@@ -1,0 +1,295 @@
+---
+- name: Setup Hetzner AX 43 for Hosting Panel
+  hosts: ax43
+  become: yes
+  vars:
+    app_user: hosting
+    app_dir: /opt/hosting-panel
+    postgres_db: hosting_platform
+    postgres_user: hosting
+    postgres_password: "{{ lookup('env', 'POSTGRES_PASSWORD') }}"
+    redis_password: "{{ lookup('env', 'REDIS_PASSWORD') }}"
+
+  tasks:
+    - name: Update and upgrade apt packages
+      apt:
+        update_cache: yes
+        upgrade: dist
+
+    - name: Install basic packages
+      apt:
+        name:
+          - curl
+          - wget
+          - git
+          - build-essential
+          - ufw
+          - fail2ban
+          - unattended-upgrades
+        state: present
+
+    - name: Set hostname
+      hostname:
+        name: "{{ server_hostname }}"
+
+    - name: Add hostname to /etc/hosts
+      lineinfile:
+        path: /etc/hosts
+        line: "127.0.0.1 {{ server_hostname }}"
+
+    - name: Configure UFW firewall
+      block:
+        - name: Allow SSH
+          ufw:
+            rule: allow
+            port: '22'
+            proto: tcp
+
+        - name: Allow HTTP
+          ufw:
+            rule: allow
+            port: '80'
+            proto: tcp
+
+        - name: Allow HTTPS
+          ufw:
+            rule: allow
+            port: '443'
+            proto: tcp
+
+        - name: Deny backend ports
+          ufw:
+            rule: deny
+            port: '8080:8084'
+            proto: tcp
+
+        - name: Enable UFW
+          ufw:
+            state: enabled
+
+    - name: Create application user
+      user:
+        name: "{{ app_user }}"
+        system: yes
+        shell: /bin/bash
+        home: "{{ app_dir }}"
+        create_home: yes
+
+    - name: Add user to sudo group
+      user:
+        name: "{{ app_user }}"
+        groups: sudo
+        append: yes
+
+    - name: Install PostgreSQL
+      block:
+        - name: Add PostgreSQL GPG key
+          apt_key:
+            url: https://www.postgresql.org/media/keys/ACCC4CF8.asc
+            state: present
+
+        - name: Add PostgreSQL repository
+          apt_repository:
+            repo: "deb http://apt.postgresql.org/pub/repos/apt {{ ansible_distribution_release }}-pgdg main"
+            state: present
+
+        - name: Install PostgreSQL
+          apt:
+            name:
+              - "postgresql-{{ postgres_version }}"
+              - "postgresql-contrib-{{ postgres_version }}"
+              - python3-psycopg2
+            state: present
+            update_cache: yes
+
+        - name: Start and enable PostgreSQL
+          systemd:
+            name: postgresql
+            state: started
+            enabled: yes
+
+    - name: Configure PostgreSQL
+      block:
+        - name: Create PostgreSQL user
+          postgresql_user:
+            name: "{{ postgres_user }}"
+            password: "{{ postgres_password }}"
+            role_attr_flags: CREATEDB
+          become_user: postgres
+
+        - name: Create PostgreSQL database
+          postgresql_db:
+            name: "{{ postgres_db }}"
+            owner: "{{ postgres_user }}"
+          become_user: postgres
+
+        - name: Enable PostgreSQL extensions
+          postgresql_ext:
+            name: "{{ item }}"
+            db: "{{ postgres_db }}"
+          become_user: postgres
+          loop:
+            - uuid-ossp
+            - pgcrypto
+            - pg_trgm
+
+    - name: Install Redis
+      block:
+        - name: Add Redis GPG key
+          get_url:
+            url: https://packages.redis.io/gpg
+            dest: /tmp/redis.gpg
+
+        - name: Import Redis key
+          apt_key:
+            file: /tmp/redis.gpg
+            state: present
+
+        - name: Add Redis repository
+          apt_repository:
+            repo: "deb [signed-by=/usr/share/keyrings/redis-archive-keyring.gpg] https://packages.redis.io/deb {{ ansible_distribution_release }} main"
+            state: present
+
+        - name: Install Redis
+          apt:
+            name: redis
+            state: present
+            update_cache: yes
+
+        - name: Configure Redis password
+          lineinfile:
+            path: /etc/redis/redis.conf
+            regexp: '^# requirepass'
+            line: "requirepass {{ redis_password }}"
+
+        - name: Bind Redis to localhost
+          lineinfile:
+            path: /etc/redis/redis.conf
+            regexp: '^bind'
+            line: 'bind 127.0.0.1'
+
+        - name: Restart Redis
+          systemd:
+            name: redis
+            state: restarted
+            enabled: yes
+
+    - name: Install NGINX
+      apt:
+        name: nginx
+        state: present
+
+    - name: Start and enable NGINX
+      systemd:
+        name: nginx
+        state: started
+        enabled: yes
+
+    - name: Install Node.js
+      block:
+        - name: Download Node.js setup script
+          get_url:
+            url: "https://deb.nodesource.com/setup_{{ node_version }}.x"
+            dest: /tmp/node_setup.sh
+            mode: '0755'
+
+        - name: Run Node.js setup script
+          shell: /tmp/node_setup.sh
+
+        - name: Install Node.js
+          apt:
+            name: nodejs
+            state: present
+            update_cache: yes
+
+    - name: Install Certbot
+      apt:
+        name:
+          - certbot
+          - python3-certbot-nginx
+        state: present
+
+    - name: Install monitoring tools
+      apt:
+        name:
+          - prometheus-node-exporter
+        state: present
+
+    - name: Start and enable node exporter
+      systemd:
+        name: prometheus-node-exporter
+        state: started
+        enabled: yes
+
+    - name: Create application directories
+      file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+      loop:
+        - "{{ app_dir }}/api-gateway"
+        - "{{ app_dir }}/services/user-service"
+        - "{{ app_dir }}/services/billing-service"
+        - "{{ app_dir }}/services/provisioning-service"
+        - "{{ app_dir }}/services/email-service"
+        - "{{ app_dir }}/frontend"
+        - "{{ app_dir }}/logs"
+        - "{{ app_dir }}/backups"
+        - "{{ app_dir }}/migrations"
+        - "{{ app_dir }}/scripts"
+
+    - name: Configure Fail2Ban
+      systemd:
+        name: fail2ban
+        state: started
+        enabled: yes
+
+    - name: Enable unattended upgrades
+      debconf:
+        name: unattended-upgrades
+        question: unattended-upgrades/enable_auto_updates
+        value: 'true'
+        vtype: boolean
+
+    - name: Create swap file
+      block:
+        - name: Check if swap exists
+          stat:
+            path: /swapfile
+          register: swap_file
+
+        - name: Create swap
+          command: fallocate -l 8G /swapfile
+          when: not swap_file.stat.exists
+
+        - name: Set swap permissions
+          file:
+            path: /swapfile
+            mode: '0600'
+          when: not swap_file.stat.exists
+
+        - name: Make swap
+          command: mkswap /swapfile
+          when: not swap_file.stat.exists
+
+        - name: Enable swap
+          command: swapon /swapfile
+          when: not swap_file.stat.exists
+
+        - name: Add swap to fstab
+          lineinfile:
+            path: /etc/fstab
+            line: '/swapfile none swap sw 0 0'
+          when: not swap_file.stat.exists
+
+    - name: Display completion message
+      debug:
+        msg:
+          - "AX 43 setup completed!"
+          - "PostgreSQL: {{ postgres_db }} created"
+          - "Redis: Configured with password"
+          - "NGINX: Running"
+          - "Node.js: Installed"
+          - "Next step: Deploy application binaries"

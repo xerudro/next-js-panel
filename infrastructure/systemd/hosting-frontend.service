@@ -1,0 +1,45 @@
+[Unit]
+Description=Hosting Panel Frontend (Next.js)
+Documentation=https://github.com/xerudro/next-js-panel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hosting
+Group=hosting
+WorkingDirectory=/opt/hosting-panel/frontend
+
+# Environment variables
+Environment="NODE_ENV=production"
+Environment="PORT=3000"
+EnvironmentFile=/opt/hosting-panel/frontend/.env.production
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/hosting-panel/frontend/.next/cache
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=4096
+
+# Start Next.js standalone server
+ExecStart=/usr/bin/node /opt/hosting-panel/frontend/.next/standalone/server.js
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=always
+RestartSec=5
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hosting-frontend
+
+[Install]
+WantedBy=multi-user.target
