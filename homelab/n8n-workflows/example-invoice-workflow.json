@@ -1,0 +1,147 @@
+{
+  "name": "Invoice Generation Workflow - Example",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "invoice-created",
+        "options": {}
+      },
+      "name": "Webhook - Invoice Created",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "webhookId": "invoice-webhook-001"
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT i.*, c.email, c.name, c.company \nFROM invoices i \nJOIN customers c ON i.customer_id = c.id \nWHERE i.id = {{ $json.invoice_id }}",
+        "additionalFields": {}
+      },
+      "name": "Get Invoice Details",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Generate invoice PDF content\nconst invoice = $input.first().json;\n\nreturn [\n  {\n    json: {\n      invoice_number: invoice.invoice_number,\n      customer_name: invoice.name,\n      customer_email: invoice.email,\n      amount: invoice.amount,\n      due_date: invoice.due_date,\n      pdf_content: `Invoice #${invoice.invoice_number} for ${invoice.company}`\n    }\n  }\n];"
+      },
+      "name": "Format Invoice Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "generic",
+        "genericAuthType": "httpBasicAuth",
+        "url": "https://api.pdfmonkey.io/api/v1/documents",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "template_id",
+              "value": "={{ $env.PDF_TEMPLATE_ID }}"
+            },
+            {
+              "name": "data",
+              "value": "={{ $json }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "name": "Generate PDF (Example API)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "fromEmail": "billing@yourdomain.com",
+        "toEmail": "={{ $json.customer_email }}",
+        "subject": "Invoice #{{ $json.invoice_number }} - Payment Due",
+        "text": "Dear {{ $json.customer_name }},\\n\\nPlease find attached your invoice.\\n\\nAmount: €{{ $json.amount }}\\nDue Date: {{ $json.due_date }}\\n\\nThank you!",
+        "attachments": "={{ $json.pdf_url }}",
+        "options": {}
+      },
+      "name": "Send Invoice Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 1,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "UPDATE invoices SET status = 'sent', sent_at = NOW() WHERE id = {{ $json.invoice_id }}",
+        "additionalFields": {}
+      },
+      "name": "Update Invoice Status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    }
+  ],
+  "connections": {
+    "Webhook - Invoice Created": {
+      "main": [
+        [
+          {
+            "node": "Get Invoice Details",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Invoice Details": {
+      "main": [
+        [
+          {
+            "node": "Format Invoice Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Invoice Data": {
+      "main": [
+        [
+          {
+            "node": "Generate PDF (Example API)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generate PDF (Example API)": {
+      "main": [
+        [
+          {
+            "node": "Send Invoice Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send Invoice Email": {
+      "main": [
+        [
+          {
+            "node": "Update Invoice Status",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "id": "example-invoice-workflow"
+}
