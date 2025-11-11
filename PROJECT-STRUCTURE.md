@@ -8,7 +8,7 @@ This document outlines the complete directory structure for all components of th
 
 ## 🗂️ Repository Overview
 
-```
+```text
 next-js-panel/
 ├── README.md                           # Main project README
 ├── PROJECT-STRUCTURE.md                # This file
@@ -601,7 +601,7 @@ node_modules/
 
 **Total Project Size** (estimated):
 
-```
+```text
 api-gateway/        ~5,000 lines of RUST
 services/           ~15,000 lines of Go
 frontend/           ~20,000 lines of TypeScript/React
