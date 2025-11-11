@@ -42,7 +42,7 @@ The **Unified Hosting Platform** is a next-generation, enterprise-grade hosting 
 - **Control Panel Management** (Enhance Panel + CloudPanel capabilities)
 - **Advanced Security** (CloudLinux-inspired PHP hardening, enterprise WAF, firewall)
 - **Cloud-Native Architecture** (Built for Hetzner Cloud infrastructure)
-- **Modern Tech Stack** (RUST, Go, HTMX for maximum performance)
+- **Modern Tech Stack** (RUST, Go, Next.js + React for maximum performance)
 
 ### 1.2 Core Differentiators
 
@@ -50,7 +50,7 @@ The **Unified Hosting Platform** is a next-generation, enterprise-grade hosting 
 |---------|-------------|-------------------|
 | **Performance** | RUST core + Go microservices | PHP/Python monoliths |
 | **Security** | Multi-layer hardening, ML-powered WAF | Basic firewalls |
-| **UI/UX** | HTMX (no heavy JS frameworks) | jQuery/Angular/React |
+| **UI/UX** | Next.js 16 + React (modern, performant) | jQuery/Angular/older frameworks |
 | **Automation** | n8n + Ansible + Bash + Python | Limited scripting |
 | **Cost** | Optimized for Hetzner (20-40% savings) | Cloud-agnostic |
 | **Architecture** | Microservices + Event-driven | Monolithic |
@@ -132,18 +132,23 @@ Storage:
 
 ```yaml
 Frontend:
-  Primary: HTMX 1.9+
-  Templating: Go templates / Tera (RUST)
-  CSS Framework: Tailwind CSS 3.x
-  Icons: Lucide Icons
-  Charts: Chart.js / Apache ECharts
-  
+  Framework: Next.js 16 (App Router)
+  UI Library: React 19
+  Language: TypeScript 5.x
+  CSS Framework: Tailwind CSS 4.x
+  Icons: Lucide React
+  Charts: Recharts / Apache ECharts
+  State Management: Zustand / React Query
+  Forms: React Hook Form + Zod validation
+
 Philosophy:
-  - Server-side rendering (SSR)
+  - Server-side rendering (SSR) & Static Site Generation (SSG)
+  - React Server Components (RSC)
   - Progressive enhancement
-  - No heavy JavaScript frameworks
-  - < 50KB total JS bundle
+  - Type-safe development
+  - Optimized bundle sizes with code splitting
   - Lazy loading for non-critical resources
+  - API routes for backend integration
 ```
 
 #### **Automation Stack**
@@ -187,12 +192,12 @@ System Scripting:
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                    Frontend (HTMX + Tailwind)               │
+│         Frontend (Next.js 16 + React 19 + TypeScript)       │
 │  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐      │
 │  │  Admin Panel │  │ Client Portal│  │   API Docs   │      │
 │  └──────────────┘  └──────────────┘  └──────────────┘      │
 └────────────────────────┬────────────────────────────────────┘
-                         │ HTTPS/WSS
+                         │ HTTPS/WSS/API
 ┌────────────────────────┴────────────────────────────────────┐
 │              API Gateway (RUST - Actix/Axum)                │
 │  • Authentication • Rate Limiting • Load Balancing           │
@@ -586,11 +591,13 @@ Sections:
   - Security (2FA, API keys)
 
 Features:
-  - Single-page application feel (HTMX)
-  - Instant search
-  - Contextual help
-  - Multi-language support
+  - Single-page application (Next.js App Router)
+  - Instant search with debouncing
+  - Contextual help tooltips
+  - Multi-language support (i18n)
   - Accessible (WCAG 2.1 AA)
+  - Real-time updates (WebSockets)
+  - Optimistic UI updates
 ```
 
 ### 4.4 Notification System
@@ -2271,7 +2278,7 @@ Server Roles:
   1. Control Node (Master):
      Purpose: Central management, control panel UI, billing
      Services:
-       - Web interface (HTMX frontend)
+       - Web interface (Next.js 16 frontend)
        - API gateway (RUST)
        - PostgreSQL (primary database)
        - Redis (session, cache)
@@ -4369,19 +4376,23 @@ Go Microservices:
     - Memory: < 50MB per service
     - Concurrent requests: 10,000+
 
-Frontend (HTMX):
+Frontend (Next.js 16):
   Optimizations:
-    - Server-side rendering (fast TTFB)
-    - Minimal JavaScript (< 50KB total)
-    - CSS purging (remove unused)
-    - HTTP/2 push (critical resources)
-    - Service worker (offline capability)
-  
+    - Server-side rendering (SSR) & Static Site Generation (SSG)
+    - React Server Components (RSC)
+    - Code splitting & lazy loading
+    - Image optimization (next/image)
+    - Font optimization (next/font)
+    - CSS modules & Tailwind purging
+    - API routes for backend integration
+    - Service worker (PWA support)
+
   Metrics:
     - Lighthouse Score: 95+ (all metrics)
     - First Contentful Paint: < 1s
     - Time to Interactive: < 2s
-    - Total page size: < 500KB
+    - Total JavaScript: < 150KB (gzipped)
+    - Core Web Vitals: All "Good"
 ```
 
 ---
@@ -4672,28 +4683,40 @@ RUST vs Go vs PHP:
     Go: Microservices, APIs, business logic
     PHP: Legacy support only (not used)
 
-HTMX vs React/Vue:
-  Bundle Size:
-    HTMX: ~14KB
-    React: ~40KB (without React DOM)
-    Vue: ~33KB
-  
-  Complexity:
-    HTMX: Low (HTML attributes)
-    React: High (JSX, state, hooks)
-    Vue: Medium (templates, reactivity)
-  
-  Server-Side:
-    HTMX: Yes (requires SSR)
-    React: Optional (SSR with Next.js)
-    Vue: Optional (SSR with Nuxt.js)
-  
-  Why HTMX:
-    - Minimal JavaScript
-    - Server-side rendering (fast TTFB)
-    - Progressive enhancement
-    - Accessibility (works without JS)
-    - Reduced complexity
+Next.js 16 + React vs Other Frameworks:
+  Framework Comparison:
+    Next.js 16: Full-stack framework with RSC, SSR, SSG
+    SvelteKit: Lightweight, but smaller ecosystem
+    Remix: Good, but less mature than Next.js
+    Nuxt.js: Great for Vue users, but React ecosystem larger
+    Astro: Good for content sites, less for apps
+
+  Why Next.js 16:
+    - Modern React 19 with Server Components
+    - Built-in SSR, SSG, and ISR (Incremental Static Regeneration)
+    - Excellent performance with automatic code splitting
+    - TypeScript support out of the box
+    - API routes for backend integration
+    - File-based routing (App Router)
+    - Image and font optimization built-in
+    - Best-in-class developer experience
+    - Large ecosystem and community
+    - Production-ready with Vercel or self-hosting
+    - SEO-friendly with server-side rendering
+    - Progressive enhancement capabilities
+
+  Bundle Size (Production):
+    - Core runtime: ~85KB (gzipped with React 19)
+    - Per-page chunks: ~30-50KB (code splitting)
+    - Total initial load: ~120-150KB (with Tailwind)
+    - Subsequent navigation: Only page-specific JS
+
+  Performance Benefits:
+    - React Server Components (RSC) - Zero client JS for static content
+    - Streaming SSR - Progressive hydration
+    - Automatic static optimization
+    - Edge runtime support
+    - Built-in caching strategies
 
 Hetzner vs AWS/GCP/Azure:
   Cost:
@@ -4872,8 +4895,9 @@ Terms:
   GDPR: General Data Protection Regulation
   GeoIP: Geographic IP location
   HSTS: HTTP Strict Transport Security
-  HTMX: High power tools for HTML
+  Next.js: React framework with SSR, SSG, and ISR
   HTTPS: HTTP Secure
+  RSC: React Server Components
   IMAP: Internet Message Access Protocol
   IDS: Intrusion Detection System
   IPS: Intrusion Prevention System
@@ -4930,7 +4954,7 @@ Document Information:
 
 Review History:
   - v1.0: Initial individual PRDs (Enhance, CloudPanel, WHMCS)
-  - v2.0: Unified PRD with RUST/Go/HTMX stack
+  - v2.0: Unified PRD with RUST/Go/Next.js stack
 
 Approval:
   Technical Lead: [Signature Required]
@@ -4945,6 +4969,6 @@ Next Review: Quarterly (or as needed)
 
 # End of Product Requirements Document
 
-**This comprehensive PRD consolidates features from Enhance Panel, CloudPanel, and WHMCS billing system into a unified, modern hosting platform optimized for Hetzner Cloud infrastructure with a cutting-edge tech stack (RUST, Go, HTMX) and extensive automation capabilities (n8n, Ansible, Bash, Python).**
+**This comprehensive PRD consolidates features from Enhance Panel, CloudPanel, and WHMCS billing system into a unified, modern hosting platform optimized for Hetzner Cloud infrastructure with a cutting-edge tech stack (RUST, Go, Next.js 16 + React 19) and extensive automation capabilities (n8n, Ansible, Bash, Python).**
 
 **The platform is designed for security, performance, scalability, and ease of use - providing hosting providers with a complete solution for managing customers, services, billing, and infrastructure.**

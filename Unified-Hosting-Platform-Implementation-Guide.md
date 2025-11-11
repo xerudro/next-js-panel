@@ -47,7 +47,7 @@ The Unified Hosting Platform is an enterprise-grade hosting control panel built 
 | Server provisioning | Bash + Ansible | System integration, idempotency, declarative configuration |
 | Workflow automation | n8n | Visual builder, extensive integrations, self-hosted alternative to Zapier |
 | Server process management | systemd | Native Linux integration, automatic restarts, resource limits, dependency management |
-| Frontend rendering | HTMX + Tailwind | Progressive enhancement, minimal JavaScript, fast TTFB (<500ms target) |
+| Frontend rendering | Next.js 14+ (React) + Tailwind | SSR/SSG, modern React, API routes, TypeScript support, excellent performance |
 
 ---
 
@@ -61,10 +61,10 @@ The platform is designed as independent microservices with clear separation of c
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│                Frontend Layer (HTMX + Tailwind)             │
+│           Frontend Layer (Next.js 14 + React + Tailwind)    │
 │  ├─ Admin Panel      ├─ Client Portal      ├─ API Docs      │
 └────────────────────┬────────────────────────────────────────┘
-                     │ HTTPS/WSS
+                     │ HTTPS/WSS/API
 ┌────────────────────┴────────────────────────────────────────┐
 │           API Gateway (RUST - Actix/Axum)                   │
 │  ├─ Authentication  ├─ Rate Limiting  ├─ Load Balancing     │
@@ -1961,172 +1961,538 @@ func handleError(c *fiber.Ctx, err error) error {
 
 ---
 
-## Frontend Implementation (HTMX)
+## Frontend Implementation (Next.js 16 + React 19 + TypeScript)
 
-### HTMX + Tailwind Templates
+### Next.js Project Structure & Setup
 
-```html
-<!-- Base layout with server-side rendering -->
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{{ .Title }} - HCC Hosting Platform</title>
-    
-    <!-- Tailwind CSS (purged to ~50KB) -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        primary: '#3b82f6',
-                        secondary: '#10b981',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- HTMX -->
-    <script src="https://unpkg.com/htmx.org@1.9.10"></script>
-    <script src="https://unpkg.com/htmx.org/dist/ext/response-targets.js"></script>
-    <script src="https://unpkg.com/htmx.org/dist/ext/loading-states.js"></script>
-    
-    <!-- Hyperscript for client interactivity (lightweight) -->
-    <script src="https://unpkg.com/hyperscript.org@0.9.11"></script>
-    
-    <style>
-        .htmx-request.htmx-indicator { display:none; }
-        .htmx-request .htmx-indicator { display:inline; }
-        .htmx-settling .htmx-swapping { opacity:0; transition: opacity 200ms ease-out; }
-        .htmx-settling .htmx-settling { opacity:1; transition: opacity 200ms ease-in; }
-    </style>
-</head>
-<body class="bg-gray-50">
-    <!-- Navigation -->
-    {{ template "nav.html" . }}
-    
-    <!-- Main content -->
-    <main class="container mx-auto px-4 py-8">
-        {{ template "content" . }}
-    </main>
-    
-    <!-- Toast notifications -->
-    <div id="toast-container" class="fixed bottom-4 right-4 space-y-2"></div>
-</body>
-</html>
+```bash
+# Initialize Next.js project with TypeScript and Tailwind
+npx create-next-app@latest hcc-hosting-panel \
+  --typescript \
+  --tailwind \
+  --app \
+  --src-dir \
+  --import-alias "@/*"
+
+cd hcc-hosting-panel
+
+# Install additional dependencies
+npm install \
+  @tanstack/react-query \
+  axios \
+  zustand \
+  react-hot-toast \
+  lucide-react \
+  @headlessui/react \
+  date-fns \
+  zod \
+  react-hook-form \
+  @hookform/resolvers
 ```
 
-### Invoice List with Pagination (HTMX)
+**Project Structure:**
 
-```html
-<!-- templates/invoices-list.html -->
-<div id="invoices-container" class="space-y-4">
-    <!-- Filters -->
-    <div class="bg-white rounded-lg shadow p-4 space-y-4">
-        <h2 class="text-lg font-semibold">Filters</h2>
-        <form hx-get="/v1/invoices" 
-              hx-target="#invoices-container"
-              hx-trigger="change from:select, input from:input, submit from:form"
-              class="space-y-4">
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Status</label>
-                <select name="status" class="w-full px-3 py-2 border border-gray-300 rounded-md">
-                    <option value="">All Statuses</option>
-                    <option value="draft">Draft</option>
-                    <option value="sent">Sent</option>
-                    <option value="paid">Paid</option>
-                    <option value="overdue">Overdue</option>
-                </select>
-            </div>
-            
-            <div>
-                <label class="block text-sm font-medium text-gray-700 mb-2">Search</label>
-                <input type="text" name="search" placeholder="Invoice number or customer..."
-                       class="w-full px-3 py-2 border border-gray-300 rounded-md"
-                       hx-trigger="keyup changed delay:500ms" />
-            </div>
-            
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-                Apply Filters
-            </button>
-        </form>
+```
+hcc-hosting-panel/
+├── src/
+│   ├── app/
+│   │   ├── (auth)/
+│   │   │   ├── login/
+│   │   │   │   └── page.tsx
+│   │   │   └── layout.tsx
+│   │   ├── (dashboard)/
+│   │   │   ├── admin/
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── users/page.tsx
+│   │   │   │   ├── servers/page.tsx
+│   │   │   │   └── billing/page.tsx
+│   │   │   ├── client/
+│   │   │   │   ├── page.tsx
+│   │   │   │   ├── websites/page.tsx
+│   │   │   │   └── invoices/page.tsx
+│   │   │   └── layout.tsx
+│   │   ├── api/
+│   │   │   ├── auth/[...nextauth]/route.ts
+│   │   │   └── proxy/[...path]/route.ts
+│   │   ├── layout.tsx
+│   │   └── page.tsx
+│   ├── components/
+│   │   ├── ui/
+│   │   │   ├── Button.tsx
+│   │   │   ├── Input.tsx
+│   │   │   ├── Card.tsx
+│   │   │   └── Table.tsx
+│   │   ├── layout/
+│   │   │   ├── Sidebar.tsx
+│   │   │   ├── Header.tsx
+│   │   │   └── Footer.tsx
+│   │   └── features/
+│   │       ├── InvoiceList.tsx
+│   │       ├── ServerStatus.tsx
+│   │       └── WebsiteCard.tsx
+│   ├── lib/
+│   │   ├── api/
+│   │   │   ├── client.ts
+│   │   │   └── endpoints.ts
+│   │   ├── hooks/
+│   │   │   ├── useAuth.ts
+│   │   │   ├── useInvoices.ts
+│   │   │   └── useWebsites.ts
+│   │   └── utils/
+│   │       ├── cn.ts
+│   │       └── formatters.ts
+│   ├── types/
+│   │   ├── api.ts
+│   │   ├── user.ts
+│   │   └── invoice.ts
+│   └── styles/
+│       └── globals.css
+├── public/
+├── package.json
+├── tsconfig.json
+├── tailwind.config.ts
+└── next.config.js
+```
+
+**Root Layout (src/app/layout.tsx):**
+
+```typescript
+import type { Metadata } from 'next';
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { Providers } from '@/components/Providers';
+import { Toaster } from 'react-hot-toast';
+
+const inter = Inter({ subsets: ['latin'] });
+
+export const metadata: Metadata = {
+  title: 'HCC Hosting Platform - Enterprise Control Panel',
+  description: 'Advanced hosting control panel with billing automation',
+};
+
+export default function RootLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <html lang="en" className="h-full">
+      <body className={`${inter.className} h-full bg-gray-50`}>
+        <Providers>
+          {children}
+          <Toaster position="bottom-right" />
+        </Providers>
+      </body>
+    </html>
+  );
+}
+```
+
+**Dashboard Layout (src/app/(dashboard)/layout.tsx):**
+
+```typescript
+'use client';
+
+import { useAuth } from '@/lib/hooks/useAuth';
+import { Sidebar } from '@/components/layout/Sidebar';
+import { Header } from '@/components/layout/Header';
+import { redirect } from 'next/navigation';
+import { useEffect } from 'react';
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const { user, isLoading } = useAuth();
+
+  useEffect(() => {
+    if (!isLoading && !user) {
+      redirect('/login');
+    }
+  }, [user, isLoading]);
+
+  if (isLoading) {
+    return <div className="flex items-center justify-center h-screen">
+      <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+    </div>;
+  }
+
+  return (
+    <div className="h-full flex">
+      <Sidebar />
+      <div className="flex-1 flex flex-col overflow-hidden">
+        <Header />
+        <main className="flex-1 overflow-y-auto p-6">
+          <div className="max-w-7xl mx-auto">
+            {children}
+          </div>
+        </main>
+      </div>
     </div>
-    
-    <!-- Invoices table -->
-    <div class="bg-white rounded-lg shadow overflow-hidden">
-        <table class="w-full">
-            <thead class="bg-gray-50 border-b">
-                <tr>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Invoice #</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Customer</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Amount</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Status</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Due Date</th>
-                    <th class="px-6 py-3 text-left text-sm font-semibold text-gray-900">Actions</th>
-                </tr>
-            </thead>
-            <tbody class="divide-y">
-                {{ range .Invoices }}
-                <tr class="hover:bg-gray-50">
-                    <td class="px-6 py-4 text-sm font-medium text-blue-600">
-                        <a href="/invoices/{{ .ID }}" 
-                           hx-boost="true"
-                           class="hover:underline">{{ .InvoiceNumber }}</a>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ .CustomerName }}</td>
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ .Total | currency }}</td>
-                    <td class="px-6 py-4 text-sm">
-                        <span class="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium
-                                   {{ if eq .Status "paid" }}bg-green-100 text-green-800
-                                   {{ else if eq .Status "draft" }}bg-gray-100 text-gray-800
-                                   {{ else if eq .Status "overdue" }}bg-red-100 text-red-800
-                                   {{ else }}bg-blue-100 text-blue-800{{ end }}">
-                            {{ .Status }}
+  );
+}
+```
+
+### Invoice List Component with Pagination (Next.js + React)
+
+**Type Definitions (src/types/invoice.ts):**
+
+```typescript
+export interface Invoice {
+  id: string;
+  invoiceNumber: string;
+  customerId: string;
+  customerName: string;
+  amount: number;
+  tax: number;
+  total: number;
+  status: 'draft' | 'sent' | 'paid' | 'overdue' | 'cancelled';
+  dueDate: string;
+  issuedAt: string;
+  paidAt?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface PaginationData {
+  page: number;
+  limit: number;
+  total: number;
+  totalPages: number;
+  hasNext: boolean;
+  hasPrev: boolean;
+}
+
+export interface InvoiceListResponse {
+  data: Invoice[];
+  pagination: PaginationData;
+}
+```
+
+**API Hook (src/lib/hooks/useInvoices.ts):**
+
+```typescript
+'use client';
+
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { apiClient } from '@/lib/api/client';
+import type { Invoice, InvoiceListResponse } from '@/types/invoice';
+import toast from 'react-hot-toast';
+
+interface InvoiceFilters {
+  status?: string;
+  search?: string;
+  page?: number;
+  limit?: number;
+}
+
+export function useInvoices(filters: InvoiceFilters = {}) {
+  return useQuery<InvoiceListResponse>({
+    queryKey: ['invoices', filters],
+    queryFn: async () => {
+      const params = new URLSearchParams();
+      if (filters.status) params.set('status', filters.status);
+      if (filters.search) params.set('search', filters.search);
+      if (filters.page) params.set('page', filters.page.toString());
+      if (filters.limit) params.set('limit', filters.limit.toString());
+
+      const response = await apiClient.get(`/v1/invoices?${params}`);
+      return response.data;
+    },
+  });
+}
+
+export function useSendInvoice() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (invoiceId: string) => {
+      const response = await apiClient.post(`/v1/invoices/${invoiceId}/send`);
+      return response.data;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['invoices'] });
+      toast.success('Invoice sent successfully');
+    },
+    onError: (error: any) => {
+      toast.error(error.response?.data?.message || 'Failed to send invoice');
+    },
+  });
+}
+
+export function useDownloadInvoice() {
+  return useMutation({
+    mutationFn: async (invoiceId: string) => {
+      const response = await apiClient.get(`/v1/invoices/${invoiceId}/download`, {
+        responseType: 'blob',
+      });
+
+      // Create download link
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', `invoice-${invoiceId}.pdf`);
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    },
+    onError: (error: any) => {
+      toast.error('Failed to download invoice');
+    },
+  });
+}
+```
+
+**Invoice List Component (src/components/features/InvoiceList.tsx):**
+
+```typescript
+'use client';
+
+import { useState, useMemo } from 'react';
+import { useInvoices, useSendInvoice, useDownloadInvoice } from '@/lib/hooks/useInvoices';
+import { Download, Send, Loader2 } from 'lucide-react';
+import Link from 'next/link';
+import { format } from 'date-fns';
+import { useDebounce } from '@/lib/hooks/useDebounce';
+
+const statusColors = {
+  draft: 'bg-gray-100 text-gray-800',
+  sent: 'bg-blue-100 text-blue-800',
+  paid: 'bg-green-100 text-green-800',
+  overdue: 'bg-red-100 text-red-800',
+  cancelled: 'bg-gray-100 text-gray-500',
+};
+
+export function InvoiceList() {
+  const [status, setStatus] = useState<string>('');
+  const [searchInput, setSearchInput] = useState<string>('');
+  const [page, setPage] = useState<number>(1);
+
+  // Debounce search input
+  const debouncedSearch = useDebounce(searchInput, 500);
+
+  // Fetch invoices with filters
+  const { data, isLoading, error } = useInvoices({
+    status,
+    search: debouncedSearch,
+    page,
+    limit: 20,
+  });
+
+  const sendInvoice = useSendInvoice();
+  const downloadInvoice = useDownloadInvoice();
+
+  const handleSendInvoice = (invoiceId: string) => {
+    if (confirm('Are you sure you want to send this invoice?')) {
+      sendInvoice.mutate(invoiceId);
+    }
+  };
+
+  const handleDownloadInvoice = (invoiceId: string) => {
+    downloadInvoice.mutate(invoiceId);
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+    }).format(amount);
+  };
+
+  if (error) {
+    return (
+      <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <p className="text-red-800">Failed to load invoices. Please try again.</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Filters */}
+      <div className="bg-white rounded-lg shadow p-4 space-y-4">
+        <h2 className="text-lg font-semibold text-gray-900">Filters</h2>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Status
+            </label>
+            <select
+              value={status}
+              onChange={(e) => {
+                setStatus(e.target.value);
+                setPage(1);
+              }}
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            >
+              <option value="">All Statuses</option>
+              <option value="draft">Draft</option>
+              <option value="sent">Sent</option>
+              <option value="paid">Paid</option>
+              <option value="overdue">Overdue</option>
+              <option value="cancelled">Cancelled</option>
+            </select>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Search
+            </label>
+            <input
+              type="text"
+              value={searchInput}
+              onChange={(e) => {
+                setSearchInput(e.target.value);
+                setPage(1);
+              }}
+              placeholder="Invoice number or customer..."
+              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Invoices Table */}
+      <div className="bg-white rounded-lg shadow overflow-hidden">
+        {isLoading ? (
+          <div className="flex items-center justify-center py-12">
+            <Loader2 className="w-8 h-8 animate-spin text-blue-600" />
+          </div>
+        ) : data && data.data.length > 0 ? (
+          <>
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead className="bg-gray-50 border-b">
+                  <tr>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      Invoice #
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      Customer
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      Amount
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      Status
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      Due Date
+                    </th>
+                    <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-gray-200">
+                  {data.data.map((invoice) => (
+                    <tr key={invoice.id} className="hover:bg-gray-50">
+                      <td className="px-6 py-4 text-sm font-medium">
+                        <Link
+                          href={`/invoices/${invoice.id}`}
+                          className="text-blue-600 hover:text-blue-900 hover:underline"
+                        >
+                          {invoice.invoiceNumber}
+                        </Link>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {invoice.customerName}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {formatCurrency(invoice.total)}
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <span
+                          className={`inline-flex items-center px-3 py-1 rounded-full text-sm font-medium ${
+                            statusColors[invoice.status]
+                          }`}
+                        >
+                          {invoice.status.charAt(0).toUpperCase() + invoice.status.slice(1)}
                         </span>
-                    </td>
-                    <td class="px-6 py-4 text-sm text-gray-900">{{ .DueDate | date }}</td>
-                    <td class="px-6 py-4 text-sm space-x-2">
-                        <button hx-get="/invoices/{{ .ID }}/download"
-                                hx-target="this"
-                                class="text-blue-600 hover:text-blue-900">Download</button>
-                        <button hx-post="/invoices/{{ .ID }}/send"
-                                hx-confirm="Are you sure?"
-                                hx-target="#toast-container"
-                                class="text-green-600 hover:text-green-900">Send</button>
-                    </td>
-                </tr>
-                {{ end }}
-            </tbody>
-        </table>
+                      </td>
+                      <td className="px-6 py-4 text-sm text-gray-900">
+                        {format(new Date(invoice.dueDate), 'MMM dd, yyyy')}
+                      </td>
+                      <td className="px-6 py-4 text-sm space-x-2">
+                        <button
+                          onClick={() => handleDownloadInvoice(invoice.id)}
+                          disabled={downloadInvoice.isPending}
+                          className="inline-flex items-center text-blue-600 hover:text-blue-900 disabled:opacity-50"
+                          title="Download PDF"
+                        >
+                          <Download className="w-4 h-4" />
+                        </button>
+                        {invoice.status === 'draft' && (
+                          <button
+                            onClick={() => handleSendInvoice(invoice.id)}
+                            disabled={sendInvoice.isPending}
+                            className="inline-flex items-center text-green-600 hover:text-green-900 disabled:opacity-50"
+                            title="Send Invoice"
+                          >
+                            <Send className="w-4 h-4" />
+                          </button>
+                        )}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            {/* Pagination */}
+            <div className="px-6 py-4 border-t border-gray-200 flex items-center justify-between">
+              <button
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={!data.pagination.hasPrev}
+                className="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Previous
+              </button>
+
+              <span className="text-sm text-gray-600">
+                Page {data.pagination.page} of {data.pagination.totalPages}
+              </span>
+
+              <button
+                onClick={() => setPage((p) => p + 1)}
+                disabled={!data.pagination.hasNext}
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Next
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-12">
+            <p className="text-gray-500">No invoices found</p>
+          </div>
+        )}
+      </div>
     </div>
-    
-    <!-- Pagination -->
-    <div id="pagination" class="flex justify-between items-center">
-        {{ if .Pagination.HasPrev }}
-        <button hx-get="/v1/invoices?page={{ .Pagination.Page | add -1 }}"
-                hx-target="#invoices-container"
-                class="px-4 py-2 border border-gray-300 rounded-md hover:bg-gray-50">
-            Previous
-        </button>
-        {{ end }}
-        
-        <span class="text-sm text-gray-600">
-            Page {{ .Pagination.Page }} of {{ .Pagination.TotalPages }}
-        </span>
-        
-        {{ if .Pagination.HasNext }}
-        <button hx-get="/v1/invoices?page={{ .Pagination.Page | add 1 }}"
-                hx-target="#invoices-container"
-                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700">
-            Next
-        </button>
-        {{ end }}
+  );
+}
+```
+
+**Page Component (src/app/(dashboard)/admin/billing/page.tsx):**
+
+```typescript
+import { InvoiceList } from '@/components/features/InvoiceList';
+
+export default function BillingPage() {
+  return (
+    <div>
+      <div className="mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Invoices</h1>
+        <p className="text-gray-600 mt-1">
+          Manage and track all customer invoices
+        </p>
+      </div>
+
+      <InvoiceList />
     </div>
-</div>
+  );
+}
 ```
 
 ---
