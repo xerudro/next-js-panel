@@ -9,6 +9,7 @@ Complete guide for setting up and optimizing your Terra Office PC homelab server
 - [Server Specifications](#server-specifications)
 - [Initial System Setup](#initial-system-setup)
 - [Docker Installation & Configuration](#docker-installation--configuration)
+- [Repository Setup & Service Deployment](#repository-setup--service-deployment)
 - [PostgreSQL Optimization](#postgresql-optimization)
 - [System Performance Tuning](#system-performance-tuning)
 - [Security Hardening](#security-hardening)
@@ -327,6 +328,288 @@ docker ps
 ```bash
 sudo systemctl enable docker
 sudo systemctl enable containerd
+```
+
+---
+
+## 📦 Repository Setup & Service Deployment
+
+Now that Docker is installed, let's clone the repository and deploy all services using Docker Compose.
+
+### 1. Clone the Repository
+
+```bash
+# Navigate to your preferred location (e.g., /opt or /home/username)
+cd /opt
+
+# Clone the repository
+sudo git clone https://github.com/xerudro/next-js-panel.git
+
+# Change ownership to your user (replace 'your-username')
+sudo chown -R $USER:$USER /opt/next-js-panel
+
+# Navigate to the homelab directory
+cd /opt/next-js-panel/homelab
+```
+
+**Alternative location** (if you prefer /home):
+```bash
+cd ~
+git clone https://github.com/xerudro/next-js-panel.git
+cd next-js-panel/homelab
+```
+
+### 2. Configure Environment Variables
+
+```bash
+# Copy the example environment file
+cp .env.example .env
+
+# Edit the environment file
+nano .env
+```
+
+**Required changes in `.env`:**
+
+```bash
+# IMPORTANT: Change these passwords for security!
+POSTGRES_PASSWORD=your_secure_postgres_password_here
+REDIS_PASSWORD=your_secure_redis_password_here
+N8N_PASSWORD=your_secure_n8n_password_here
+GRAFANA_PASSWORD=your_secure_grafana_password_here
+
+# JWT secret (generate a random 32+ character string)
+JWT_SECRET=your_random_jwt_secret_minimum_32_characters_here
+
+# SMTP Configuration (optional for development)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your_email@gmail.com
+SMTP_PASSWORD=your_app_specific_password
+
+# Stripe keys (use test keys for development)
+STRIPE_SECRET_KEY=sk_test_your_stripe_test_key
+STRIPE_PUBLISHABLE_KEY=pk_test_your_stripe_test_key
+```
+
+**Generate secure passwords:**
+```bash
+# Generate random passwords
+openssl rand -base64 32  # For PostgreSQL
+openssl rand -base64 32  # For Redis
+openssl rand -base64 32  # For n8n
+openssl rand -base64 32  # For Grafana
+openssl rand -base64 48  # For JWT secret
+```
+
+### 3. Start All Services
+
+```bash
+# Make sure you're in the homelab directory
+cd /opt/next-js-panel/homelab  # or ~/next-js-panel/homelab
+
+# Start all services in detached mode
+docker compose up -d
+
+# Watch the logs (optional)
+docker compose logs -f
+```
+
+Expected output:
+```text
+[+] Running 8/8
+ ✔ Network hosting_network         Created
+ ✔ Container hosting_postgres       Started
+ ✔ Container hosting_redis          Started
+ ✔ Container hosting_prometheus     Started
+ ✔ Container hosting_n8n            Started
+ ✔ Container hosting_grafana        Started
+ ✔ Container hosting_adminer        Started
+ ✔ Container hosting_redis_commander Started
+```
+
+### 4. Verify Services are Running
+
+```bash
+# Check all containers
+docker compose ps
+
+# Check logs for any errors
+docker compose logs
+
+# Check specific service logs
+docker compose logs postgres
+docker compose logs n8n
+docker compose logs redis
+```
+
+Expected output:
+```text
+NAME                      IMAGE                              STATUS
+hosting_postgres          postgres:16-alpine                 Up (healthy)
+hosting_redis             redis:7.2-alpine                   Up (healthy)
+hosting_n8n               n8nio/n8n:latest                   Up
+hosting_prometheus        prom/prometheus:latest             Up
+hosting_grafana           grafana/grafana:latest             Up
+hosting_adminer           adminer:latest                     Up
+hosting_redis_commander   rediscommander/redis-commander     Up
+```
+
+### 5. Access Web Interfaces
+
+Once all services are running, you can access them:
+
+| Service | URL | Credentials |
+|---------|-----|-------------|
+| **n8n (Workflows)** | http://localhost:5678 | Username: admin<br>Password: (from .env N8N_PASSWORD) |
+| **Grafana (Monitoring)** | http://localhost:3001 | Username: admin<br>Password: (from .env GRAFANA_PASSWORD) |
+| **Prometheus (Metrics)** | http://localhost:9090 | No authentication |
+| **Adminer (Database UI)** | http://localhost:8081 | System: PostgreSQL<br>Server: postgres<br>Username: hosting_dev<br>Password: (from .env POSTGRES_PASSWORD)<br>Database: hosting_platform |
+| **Redis Commander** | http://localhost:8082 | No authentication |
+
+**Test database connection:**
+```bash
+# Using psql inside the container
+docker compose exec postgres psql -U hosting_dev -d hosting_platform
+
+# You should see the PostgreSQL prompt:
+hosting_platform=#
+
+# Test query
+\l  # List databases
+\q  # Quit
+```
+
+**Test Redis connection:**
+```bash
+# Using redis-cli inside the container
+docker compose exec redis redis-cli -a "your_redis_password_from_env"
+
+# Test commands
+PING  # Should return PONG
+INFO server
+EXIT
+```
+
+### 6. Manage Services
+
+```bash
+# Stop all services
+docker compose down
+
+# Stop and remove volumes (WARNING: deletes all data!)
+docker compose down -v
+
+# Restart a specific service
+docker compose restart postgres
+
+# View resource usage
+docker stats
+
+# View logs in real-time
+docker compose logs -f
+
+# Pull latest images
+docker compose pull
+
+# Rebuild containers
+docker compose up -d --build
+```
+
+### 7. Database Initialization (Optional)
+
+If you need to initialize the database with schemas or seed data:
+
+```bash
+# Create init-scripts directory if it doesn't exist
+mkdir -p /opt/next-js-panel/homelab/init-scripts
+
+# Add your SQL scripts
+nano /opt/next-js-panel/homelab/init-scripts/01-init-schema.sql
+```
+
+Example `01-init-schema.sql`:
+```sql
+-- Create tables for the hosting platform
+CREATE TABLE IF NOT EXISTS users (
+    id SERIAL PRIMARY KEY,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS subscriptions (
+    id SERIAL PRIMARY KEY,
+    user_id INTEGER REFERENCES users(id),
+    plan VARCHAR(50) NOT NULL,
+    status VARCHAR(50) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+```
+
+**Apply initialization scripts:**
+```bash
+# Stop PostgreSQL
+docker compose stop postgres
+
+# Remove the container (data persists in volume)
+docker compose rm -f postgres
+
+# Start PostgreSQL (will run init scripts)
+docker compose up -d postgres
+
+# Check logs
+docker compose logs postgres
+```
+
+### 8. Troubleshooting Service Deployment
+
+**PostgreSQL won't start:**
+```bash
+# Check logs
+docker compose logs postgres
+
+# Common issues:
+# 1. Port 5432 already in use
+sudo lsof -i :5432  # Check what's using the port
+sudo systemctl stop postgresql  # Stop system PostgreSQL if installed
+
+# 2. Permission issues
+sudo chown -R 999:999 /var/lib/docker/volumes/homelab_postgres_data/_data
+
+# 3. Corrupted data volume
+docker compose down
+docker volume rm homelab_postgres_data
+docker compose up -d postgres
+```
+
+**Redis authentication errors:**
+```bash
+# Verify password in .env matches docker-compose.yml
+grep REDIS_PASSWORD .env
+
+# Restart Redis
+docker compose restart redis
+```
+
+**n8n not accessible:**
+```bash
+# Check if PostgreSQL is healthy (n8n depends on it)
+docker compose ps postgres
+
+# Check n8n logs
+docker compose logs n8n
+
+# Restart n8n
+docker compose restart n8n
+```
+
+**Services using too much CPU/RAM:**
+```bash
+# Check resource usage
+docker stats
+
+# Add resource limits to docker-compose.yml (see Section 3.2 below)
 ```
 
 ---
