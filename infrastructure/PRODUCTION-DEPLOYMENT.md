@@ -14,7 +14,6 @@ Complete guide for deploying the Hosting Panel to production on Hetzner AX 43 us
 - [Application Deployment](#application-deployment)
 - [NGINX Configuration](#nginx-configuration)
 - [SSL Certificates](#ssl-certificates)
-- [Service Management](#service-management)
 - [Monitoring Setup](#monitoring-setup)
 - [Backup Configuration](#backup-configuration)
 - [Security Hardening](#security-hardening)
