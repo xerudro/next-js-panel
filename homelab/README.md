@@ -571,12 +571,12 @@ After setting up the homelab:
 
 ## 🔗 Useful Links
 
-- **Docker Compose Documentation**: [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
-- **PostgreSQL Documentation**: [https://www.postgresql.org/docs/](https://www.postgresql.org/docs/)
-- **Redis Documentation**: [https://redis.io/documentation](https://redis.io/documentation)
-- **n8n Documentation**: [https://docs.n8n.io/](https://docs.n8n.io/)
-- **Prometheus Documentation**: [https://prometheus.io/docs/](https://prometheus.io/docs/)
-- **Grafana Documentation**: [https://grafana.com/docs/](https://grafana.com/docs/)
+- **Docker Compose Documentation**: https://docs.docker.com/compose/
+- **PostgreSQL Documentation**: https://www.postgresql.org/docs/
+- **Redis Documentation**: https://redis.io/documentation
+- **n8n Documentation**: https://docs.n8n.io/
+- **Prometheus Documentation**: https://prometheus.io/docs/
+- **Grafana Documentation**: https://grafana.com/docs/
 
 ## 💡 Tips
 
