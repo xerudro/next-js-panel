@@ -57,7 +57,7 @@ sudo cp services/email-service/email-service /opt/hosting-panel/services/email-s
 
 # Set ownership and permissions
 sudo chown -R hosting:hosting /opt/hosting-panel/services
-sudo chmod +x /opt/hosting-panel/services/*/*.service
+sudo chmod +x /opt/hosting-panel/services/*/*
 
 # Frontend (Next.js)
 sudo cp -r frontend/.next /opt/hosting-panel/frontend/
