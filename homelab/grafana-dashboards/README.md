@@ -8,7 +8,7 @@ Grafana automatically loads dashboard configurations from this directory on star
 
 ## Creating Custom Dashboards
 
-1. Create dashboards in Grafana UI (http://localhost:3001)
+1. Create dashboards in Grafana UI ([http://localhost:3001](http://localhost:3001))
 2. Export as JSON (Dashboard settings → JSON Model)
 3. Save JSON file to this directory
 4. Restart Grafana to load: `make restart`
@@ -21,27 +21,27 @@ These dashboards can be imported by ID in Grafana:
 
 **PostgreSQL Monitoring**:
 - Dashboard ID: 9628
-- URL: https://grafana.com/grafana/dashboards/9628
+- URL: [https://grafana.com/grafana/dashboards/9628](https://grafana.com/grafana/dashboards/9628)
 - Description: PostgreSQL Database monitoring
 
 **Redis Monitoring**:
 - Dashboard ID: 11835
-- URL: https://grafana.com/grafana/dashboards/11835
+- URL: [https://grafana.com/grafana/dashboards/11835](https://grafana.com/grafana/dashboards/11835)
 - Description: Redis monitoring dashboard
 
 **Node Exporter**:
 - Dashboard ID: 1860
-- URL: https://grafana.com/grafana/dashboards/1860
+- URL: [https://grafana.com/grafana/dashboards/1860](https://grafana.com/grafana/dashboards/1860)
 - Description: System metrics (CPU, RAM, Disk, Network)
 
 **Docker Monitoring**:
 - Dashboard ID: 893
-- URL: https://grafana.com/grafana/dashboards/893
+- URL: [https://grafana.com/grafana/dashboards/893](https://grafana.com/grafana/dashboards/893)
 - Description: Docker container metrics
 
 **Go Applications**:
 - Dashboard ID: 10826
-- URL: https://grafana.com/grafana/dashboards/10826
+- URL: [https://grafana.com/grafana/dashboards/10826](https://grafana.com/grafana/dashboards/10826)
 - Description: Go application metrics
 
 ### Custom Dashboard Examples

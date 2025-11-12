@@ -4,7 +4,7 @@ This directory contains example n8n workflow exports for the hosting platform.
 
 ## Importing Workflows
 
-1. Access n8n at http://localhost:5678
+1. Access n8n at [http://localhost:5678](http://localhost:5678)
 2. Go to Workflows
 3. Click "Import from File"
 4. Select a workflow JSON file from this directory

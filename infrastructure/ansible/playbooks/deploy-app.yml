@@ -1,0 +1,193 @@
+---
+- name: Deploy Hosting Panel Application
+  hosts: ax43
+  become: yes
+  vars:
+    app_user: hosting
+    app_dir: /opt/hosting-panel
+    local_build_dir: "{{ lookup('env', 'PWD') }}"
+
+  tasks:
+    - name: Stop services before deployment
+      systemd:
+        name: "{{ item }}"
+        state: stopped
+      loop:
+        - hosting-api-gateway
+        - hosting-user-service
+        - hosting-billing-service
+        - hosting-provisioning-service
+        - hosting-email-service
+        - hosting-frontend
+      ignore_errors: yes
+
+    - name: Backup existing binaries
+      block:
+        - name: Create backup directory
+          file:
+            path: "{{ app_dir }}/backups/{{ ansible_date_time.date }}"
+            state: directory
+            owner: "{{ app_user }}"
+            group: "{{ app_user }}"
+
+        - name: Backup API Gateway
+          copy:
+            src: "{{ app_dir }}/api-gateway/api-gateway"
+            dest: "{{ app_dir }}/backups/{{ ansible_date_time.date }}/api-gateway.backup"
+            remote_src: yes
+          ignore_errors: yes
+
+        - name: Backup services
+          copy:
+            src: "{{ app_dir }}/services/{{ item }}/{{ item }}"
+            dest: "{{ app_dir }}/backups/{{ ansible_date_time.date }}/{{ item }}.backup"
+            remote_src: yes
+          loop:
+            - user-service
+            - billing-service
+            - provisioning-service
+            - email-service
+          ignore_errors: yes
+
+    - name: Deploy API Gateway
+      copy:
+        src: "{{ local_build_dir }}/api-gateway/target/release/api-gateway"
+        dest: "{{ app_dir }}/api-gateway/api-gateway"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Deploy User Service
+      copy:
+        src: "{{ local_build_dir }}/services/user-service/user-service"
+        dest: "{{ app_dir }}/services/user-service/user-service"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Deploy Billing Service
+      copy:
+        src: "{{ local_build_dir }}/services/billing-service/billing-service"
+        dest: "{{ app_dir }}/services/billing-service/billing-service"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Deploy Provisioning Service
+      copy:
+        src: "{{ local_build_dir }}/services/provisioning-service/provisioning-service"
+        dest: "{{ app_dir }}/services/provisioning-service/provisioning-service"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Deploy Email Service
+      copy:
+        src: "{{ local_build_dir }}/services/email-service/email-service"
+        dest: "{{ app_dir }}/services/email-service/email-service"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        mode: '0755'
+
+    - name: Deploy Frontend
+      block:
+        - name: Sync Next.js build
+          synchronize:
+            src: "{{ local_build_dir }}/frontend/.next"
+            dest: "{{ app_dir }}/frontend/"
+            delete: yes
+            owner: no
+            group: no
+
+        - name: Copy package.json
+          copy:
+            src: "{{ local_build_dir }}/frontend/package.json"
+            dest: "{{ app_dir }}/frontend/package.json"
+
+        - name: Copy package-lock.json
+          copy:
+            src: "{{ local_build_dir }}/frontend/package-lock.json"
+            dest: "{{ app_dir }}/frontend/package-lock.json"
+
+        - name: Install frontend dependencies
+          npm:
+            path: "{{ app_dir }}/frontend"
+            production: yes
+          become_user: "{{ app_user }}"
+
+    - name: Set ownership
+      file:
+        path: "{{ app_dir }}"
+        owner: "{{ app_user }}"
+        group: "{{ app_user }}"
+        recurse: yes
+
+    - name: Copy systemd service files
+      copy:
+        src: "{{ local_build_dir }}/infrastructure/systemd/{{ item }}"
+        dest: "/etc/systemd/system/{{ item }}"
+        mode: '0644'
+      loop:
+        - hosting-api-gateway.service
+        - hosting-user-service.service
+        - hosting-billing-service.service
+        - hosting-provisioning-service.service
+        - hosting-email-service.service
+        - hosting-frontend.service
+
+    - name: Reload systemd
+      systemd:
+        daemon_reload: yes
+
+    - name: Start and enable services
+      systemd:
+        name: "{{ item }}"
+        state: started
+        enabled: yes
+      loop:
+        - hosting-api-gateway
+        - hosting-user-service
+        - hosting-billing-service
+        - hosting-provisioning-service
+        - hosting-email-service
+        - hosting-frontend
+
+    - name: Wait for services to start
+      pause:
+        seconds: 5
+
+    - name: Check service status
+      systemd:
+        name: "{{ item }}"
+      register: service_status
+      loop:
+        - hosting-api-gateway
+        - hosting-user-service
+        - hosting-billing-service
+        - hosting-provisioning-service
+        - hosting-email-service
+        - hosting-frontend
+
+    - name: Display service status
+      debug:
+        msg: "{{ item.name }} is {{ item.status.ActiveState }}"
+      loop: "{{ service_status.results }}"
+
+    - name: Test API Gateway health
+      uri:
+        url: http://localhost:8080/health
+        return_content: yes
+      register: health_check
+      ignore_errors: yes
+
+    - name: Display health check result
+      debug:
+        msg: "API Gateway health check: {{ health_check.status | default('FAILED') }}"
+
+    - name: Display deployment summary
+      debug:
+        msg:
+          - "Deployment completed!"
+          - "All services restarted"
+          - "Check logs with: journalctl -u hosting-* -f"
+          - "Backups saved to: {{ app_dir }}/backups/{{ ansible_date_time.date }}"

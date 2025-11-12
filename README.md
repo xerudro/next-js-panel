@@ -66,6 +66,15 @@ A modern, full-featured hosting control panel designed for:
 | [🚀 Solo Sprint Plan](SOLO-SPRINT-PLAN.md) | **18-sprint plan (9 months)** | ✅ Complete |
 | [🛠️ Homelab Setup](homelab/README.md) | Docker Compose development env | ✅ Complete |
 
+### Production Deployment
+
+| Document | Description | Status |
+|----------|-------------|--------|
+| [🏗️ Infrastructure Overview](infrastructure/README.md) | Production deployment overview | ✅ Complete |
+| [📖 Production Guide](infrastructure/PRODUCTION-DEPLOYMENT.md) | Complete deployment to AX 43 | ✅ Complete |
+| [⚙️ systemd Services](infrastructure/systemd/README.md) | Service management with systemd | ✅ Complete |
+| [🤖 Ansible Playbooks](infrastructure/ansible/README.md) | Automated deployment | ✅ Complete |
+
 ---
 
 ## 🛠️ Tech Stack
@@ -97,7 +106,9 @@ A modern, full-featured hosting control panel designed for:
 ### Infrastructure
 - **Hetzner AX 43** - Production server (8-core, 64GB RAM, 2x512GB NVMe)
 - **NGINX 1.26** - Reverse proxy & web server
-- **Docker + systemd** - Service management
+- **systemd** - Service management (production)
+- **Docker Compose** - Development environment only (homelab)
+- **Ansible** - Automated deployment
 - **GitHub Actions** - CI/CD pipeline
 
 ### Monitoring & Automation
@@ -286,7 +297,7 @@ This is currently a solo developer project, but contributions are welcome!
 
 ## 📂 Repository Structure
 
-```
+```text
 next-js-panel/
 ├── homelab/                    # Docker Compose development environment
 │   ├── docker-compose.yml      # 7 services (PostgreSQL, Redis, n8n, etc.)
@@ -348,7 +359,7 @@ This project is proprietary. All rights reserved.
 ## 📧 Contact
 
 For questions or feedback:
-- **GitHub Issues**: https://github.com/xerudro/next-js-panel/issues
+- **GitHub Issues**: [https://github.com/xerudro/next-js-panel/issues](https://github.com/xerudro/next-js-panel/issues)
 - **Email**: [Your email here]
 
 ---

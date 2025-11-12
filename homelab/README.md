@@ -9,10 +9,10 @@ Complete Docker Compose setup for local development on your Terra Office PC home
 | PostgreSQL 16 | 5432 | Primary database | - |
 | Redis 7.2 | 6379 | Session storage & caching | - |
 | n8n | 5678 | Workflow automation | admin/admin |
-| Prometheus | 9090 | Metrics collection | http://localhost:9090 |
+| Prometheus | 9090 | Metrics collection | [http://localhost:9090](http://localhost:9090) |
 | Grafana | 3001 | Monitoring dashboards | admin/admin |
-| Adminer | 8081 | Database UI | http://localhost:8081 |
-| Redis Commander | 8082 | Redis UI | http://localhost:8082 |
+| Adminer | 8081 | Database UI | [http://localhost:8081](http://localhost:8081) |
+| Redis Commander | 8082 | Redis UI | [http://localhost:8082](http://localhost:8082) |
 
 ## 🚀 Quick Start
 
@@ -86,11 +86,11 @@ docker compose exec redis redis-cli -a dev_redis_password PING
 ```
 
 Access web UIs:
-- **n8n**: http://localhost:5678 (admin/admin)
-- **Grafana**: http://localhost:3001 (admin/admin)
-- **Prometheus**: http://localhost:9090
-- **Adminer**: http://localhost:8081
-- **Redis Commander**: http://localhost:8082
+- **n8n**: [http://localhost:5678](http://localhost:5678) (admin/admin)
+- **Grafana**: [http://localhost:3001](http://localhost:3001) (admin/admin)
+- **Prometheus**: [http://localhost:9090](http://localhost:9090)
+- **Adminer**: [http://localhost:8081](http://localhost:8081)
+- **Redis Commander**: [http://localhost:8082](http://localhost:8082)
 
 ## 🗄️ Database Management
 
@@ -107,7 +107,7 @@ docker compose exec postgres psql -U hosting_dev -d hosting_platform
 ```
 
 Using Adminer:
-- URL: http://localhost:8081
+- URL: [http://localhost:8081](http://localhost:8081)
 - System: PostgreSQL
 - Server: postgres
 - Username: hosting_dev
@@ -160,7 +160,7 @@ docker compose restart prometheus
 
 ### Grafana Dashboards
 
-Access Grafana at http://localhost:3001 (admin/admin)
+Access Grafana at [http://localhost:3001](http://localhost:3001) (admin/admin)
 
 **Add Prometheus as Data Source**:
 1. Go to Configuration → Data Sources
@@ -179,7 +179,7 @@ Access Grafana at http://localhost:3001 (admin/admin)
 
 ## 🔧 n8n Workflow Automation
 
-Access n8n at http://localhost:5678 (admin/admin)
+Access n8n at [http://localhost:5678](http://localhost:5678) (admin/admin)
 
 ### Example Workflows to Create
 
@@ -248,7 +248,7 @@ MONITOR
 
 ### Redis Commander UI
 
-Access at http://localhost:8082
+Access at [http://localhost:8082](http://localhost:8082)
 
 Features:
 - Browse all keys
@@ -353,7 +353,7 @@ When moving to production (AX 43):
 
 ## 📁 Directory Structure
 
-```
+```text
 homelab/
 ├── docker-compose.yml          # Main Docker Compose configuration
 ├── prometheus.yml              # Prometheus scrape configuration
@@ -376,7 +376,7 @@ docker compose ps
 ```
 
 Expected output:
-```
+```text
 NAME                   STATUS              PORTS
 hosting_postgres       Up (healthy)        0.0.0.0:5432->5432/tcp
 hosting_redis          Up (healthy)        0.0.0.0:6379->6379/tcp
@@ -484,7 +484,7 @@ docker compose exec prometheus cat /etc/prometheus/prometheus.yml
 ```
 
 Check targets in UI:
-- Go to http://localhost:9090/targets
+- Go to [http://localhost:9090/targets](http://localhost:9090/targets)
 - All targets should show "UP" status
 
 ### Out of disk space
@@ -571,12 +571,12 @@ After setting up the homelab:
 
 ## 🔗 Useful Links
 
-- **Docker Compose Documentation**: https://docs.docker.com/compose/
-- **PostgreSQL Documentation**: https://www.postgresql.org/docs/
-- **Redis Documentation**: https://redis.io/documentation
-- **n8n Documentation**: https://docs.n8n.io/
-- **Prometheus Documentation**: https://prometheus.io/docs/
-- **Grafana Documentation**: https://grafana.com/docs/
+- **Docker Compose Documentation**: [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
+- **PostgreSQL Documentation**: [https://www.postgresql.org/docs/](https://www.postgresql.org/docs/)
+- **Redis Documentation**: [https://redis.io/documentation](https://redis.io/documentation)
+- **n8n Documentation**: [https://docs.n8n.io/](https://docs.n8n.io/)
+- **Prometheus Documentation**: [https://prometheus.io/docs/](https://prometheus.io/docs/)
+- **Grafana Documentation**: [https://grafana.com/docs/](https://grafana.com/docs/)
 
 ## 💡 Tips
 

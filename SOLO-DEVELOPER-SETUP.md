@@ -11,7 +11,7 @@
 ### 1. **Hetzner AX 43 Dedicated Server** (Production Target)
 
 **Specifications (Typical AX 43):**
-```yaml
+```text
 CPU: AMD Ryzen 7 3700X (8 cores / 16 threads)
 RAM: 64 GB DDR4 ECC
 Storage: 2x 512 GB NVMe SSD (RAID 1)
@@ -43,7 +43,7 @@ Price: ~€49-59/month (depending on exact model)
 ### 2. **2 VPS Servers** (Development)
 
 **Typical VPS Specs:**
-```yaml
+```text
 # Assuming Hetzner CPX or CX series
 VPS 1 (Development):
   CPU: 2-4 vCPUs
@@ -70,7 +70,7 @@ VPS 2 (Staging):
 ### 3. **Homelab (Terra Office PC)**
 
 **Current Setup:**
-```yaml
+```text
 Purpose: Development server
 Services:
   - n8n (workflow automation)
@@ -124,7 +124,7 @@ Power Cost: ~€5-10/month (estimate)
 
 ### **Total Monthly Operating Costs**
 
-```
+```text
 Infrastructure: €73-108/month ($80-118/month)
 SaaS Tools:    €0/month
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -139,7 +139,7 @@ TOTAL:         €73-108/month ($80-118/month)
 
 ### **Phase 1: Development (Current - Month 3)**
 **Where to build:**
-```
+```text
 ┌─────────────────────────────────────┐
 │  Homelab (Terra PC)                 │
 │  - Local Next.js development        │
@@ -163,7 +163,7 @@ TOTAL:         €73-108/month ($80-118/month)
 
 ### **Phase 2: Pre-Production (Month 3-4)**
 **Where to deploy:**
-```
+```text
 ┌─────────────────────────────────────┐
 │  VPS 2 (Staging Environment)        │
 │  - Production-like setup            │
@@ -179,7 +179,7 @@ TOTAL:         €73-108/month ($80-118/month)
 
 ### **Phase 3: Production (Month 4+)**
 **Where to launch:**
-```
+```text
 ┌─────────────────────────────────────┐
 │  Hetzner AX 43 (Production)         │
 │                                     │
@@ -232,7 +232,7 @@ Resource Usage (estimated):
 
 ### **Realistic Solo Developer Timeline:**
 
-```
+```text
 Month 1-2: Infrastructure & Backend Foundation
   - CI/CD pipeline
   - Database schema
@@ -348,7 +348,7 @@ Month 9: Launch Preparation & Go-Live
 
 ### **Daily Schedule Example**
 
-```
+```text
 Morning (9 AM - 12 PM): Deep Work
   - Backend development (RUST/Go)
   - Complex features (authentication, billing)
@@ -447,7 +447,7 @@ Cost: €49-59/month (already paying)
 
 ### **Monthly Operating Costs**
 
-```
+```text
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 DEVELOPMENT PHASE (Month 0-3):
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -475,7 +475,7 @@ TOTAL:                  €60-82/month ($66-90/month)
 
 ### **One-Time Costs**
 
-```
+```text
 Development Tools:       €0 (GitHub Pro + Copilot already have)
 Design Tools:            €0 (Figma free tier)
 Testing Tools:           €0 (Open source)
@@ -492,7 +492,7 @@ TOTAL:                  €0-600 one-time
 
 ### **Operating Costs**
 
-```
+```text
 Month 1-3 (Development):  €14-27/month × 3 = €42-81
 Month 4-6 (Production):   €60-82/month × 3 = €180-246
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
@@ -504,7 +504,7 @@ Total 6-Month Costs:                      €222-327
 ### **Revenue Potential**
 
 **Conservative Scenario:**
-```
+```text
 Month 4: Launch with 5 beta customers @ €10/month = €50/month
 Month 5: Grow to 15 customers @ €10/month = €150/month
 Month 6: Grow to 30 customers @ €10/month = €300/month
@@ -517,7 +517,7 @@ Profit (Months 4-6):                       €260
 ```
 
 **Optimistic Scenario:**
-```
+```text
 Month 4: Launch with 10 customers @ €15/month = €150/month
 Month 5: Grow to 30 customers @ €15/month = €450/month
 Month 6: Grow to 60 customers @ €15/month = €900/month

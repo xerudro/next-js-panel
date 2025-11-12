@@ -1,0 +1,44 @@
+[Unit]
+Description=Hosting Panel Email Service (Go)
+Documentation=https://github.com/xerudro/next-js-panel
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=hosting
+Group=hosting
+WorkingDirectory=/opt/hosting-panel/services/email-service
+
+# Environment variables
+Environment="GO_ENV=production"
+EnvironmentFile=/opt/hosting-panel/services/email-service/.env
+
+# Security hardening
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=strict
+ProtectHome=true
+ReadWritePaths=/opt/hosting-panel/services/email-service/logs
+
+# Resource limits
+LimitNOFILE=65535
+LimitNPROC=4096
+
+# Start the service
+ExecStart=/opt/hosting-panel/services/email-service/email-service
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Restart policy
+Restart=always
+RestartSec=5
+StartLimitInterval=60
+StartLimitBurst=3
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=hosting-email-service
+
+[Install]
+WantedBy=multi-user.target

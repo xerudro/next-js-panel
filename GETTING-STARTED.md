@@ -129,7 +129,7 @@ Start by reading these documents in order:
 - `homelab/docker-compose.yml` - All development services
 
 **Documentation Directory**:
-```
+```text
 docs/
 ├── Unified_Hosting_Platform_PRD.md           # Product requirements
 ├── USER-STORIES.md                            # User stories
@@ -283,22 +283,22 @@ docker system prune -a
 - [ ] Review USER-STORIES.md
 
 **Day 2**: Technology stack
-- [ ] Next.js 16 documentation: https://nextjs.org/docs
-- [ ] React 19 features: https://react.dev
-- [ ] Server Components: https://nextjs.org/docs/app/building-your-application/rendering/server-components
+- [ ] Next.js 16 documentation: [https://nextjs.org/docs](https://nextjs.org/docs)
+- [ ] React 19 features: [https://react.dev](https://react.dev)
+- [ ] Server Components: [https://nextjs.org/docs/app/building-your-application/rendering/server-components](https://nextjs.org/docs/app/building-your-application/rendering/server-components)
 
 **Day 3**: Backend technologies
-- [ ] RUST basics: https://doc.rust-lang.org/book/
-- [ ] Actix-web: https://actix.rs
-- [ ] Go basics: https://go.dev/tour/
+- [ ] RUST basics: [https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/)
+- [ ] Actix-web: [https://actix.rs](https://actix.rs)
+- [ ] Go basics: [https://go.dev/tour/](https://go.dev/tour/)
 
 **Day 4**: Database and infrastructure
-- [ ] PostgreSQL tutorial: https://www.postgresql.org/docs/
-- [ ] Docker Compose: https://docs.docker.com/compose/
-- [ ] NGINX basics: https://nginx.org/en/docs/
+- [ ] PostgreSQL tutorial: [https://www.postgresql.org/docs/](https://www.postgresql.org/docs/)
+- [ ] Docker Compose: [https://docs.docker.com/compose/](https://docs.docker.com/compose/)
+- [ ] NGINX basics: [https://nginx.org/en/docs/](https://nginx.org/en/docs/)
 
 **Day 5**: Development workflow
-- [ ] GitHub Actions: https://docs.github.com/en/actions
+- [ ] GitHub Actions: [https://docs.github.com/en/actions](https://docs.github.com/en/actions)
 - [ ] Git workflow best practices
 - [ ] Testing strategies
 
@@ -471,14 +471,14 @@ docker volume prune
 
 ### Community Resources
 
-- **Next.js Discord**: https://nextjs.org/discord
-- **Rust Users Forum**: https://users.rust-lang.org/
-- **Go Forum**: https://forum.golangbridge.org/
+- **Next.js Discord**: [https://nextjs.org/discord](https://nextjs.org/discord)
+- **Rust Users Forum**: [https://users.rust-lang.org/](https://users.rust-lang.org/)
+- **Go Forum**: [https://forum.golangbridge.org/](https://forum.golangbridge.org/)
 - **Stack Overflow**: Tag your questions appropriately
 
 ### Project Issues
 
-Create a GitHub issue: https://github.com/xerudro/next-js-panel/issues
+Create a GitHub issue: [https://github.com/xerudro/next-js-panel/issues](https://github.com/xerudro/next-js-panel/issues)
 
 ---
 

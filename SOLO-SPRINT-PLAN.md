@@ -31,6 +31,29 @@
 
 ---
 
+## 🏗️ Deployment Architecture
+
+**Development** (Homelab - Terra PC):
+- Docker Compose for all services (PostgreSQL, Redis, n8n, Prometheus, Grafana)
+- Run application code natively during development (`cargo run`, `go run`, `npm run dev`)
+
+**Production** (Hetzner AX 43):
+- **systemd services** for all application components (NOT Docker)
+- Native PostgreSQL and Redis installations
+- NGINX as reverse proxy
+- systemd for service management
+- Ansible for automated deployment
+- See `infrastructure/PRODUCTION-DEPLOYMENT.md` for details
+
+**Why systemd for production?**
+- Better performance (no container overhead)
+- Traditional Linux service management
+- Customer websites run as NGINX vhosts + PHP-FPM (not containers)
+- Easier resource control and debugging
+- Standard hosting panel architecture
+
+---
+
 ## 🎯 Solo Developer Strategy
 
 ### Weekly Work Pattern
@@ -971,11 +994,14 @@ Day 6-7: Documentation
   [ ] Write deployment guide
   [ ] Create troubleshooting guide
 
-Day 8-10: Launch Readiness
-  [ ] Deploy to AX 43 production
-  [ ] Configure NGINX and SSL
-  [ ] Set up monitoring alerts
-  [ ] Create backup strategy
+Day 8-10: Production Deployment (systemd)
+  [ ] Build production binaries (RUST, Go, Next.js)
+  [ ] Run Ansible playbook for AX 43 setup
+  [ ] Deploy binaries using systemd services
+  [ ] Configure NGINX reverse proxy
+  [ ] Obtain SSL certificates (Let's Encrypt)
+  [ ] Set up monitoring (Prometheus Node Exporter)
+  [ ] Configure automated backups
   [ ] Perform final smoke tests
   [ ] 🚀 Launch MVP!
 ```
