@@ -305,28 +305,28 @@ docker system prune -a
 ### Resources by Technology
 
 **Next.js & React**:
-- [Next.js 15 Docs]([https://nextjs.org/docs](https://nextjs.org/docs))
-- [React 19 Docs]([https://react.dev](https://react.dev))
-- [Tailwind CSS]([https://tailwindcss.com/docs](https://tailwindcss.com/docs))
-- [TypeScript Handbook]([https://www.typescriptlang.org/docs/](https://www.typescriptlang.org/docs/))
+- [Next.js 15 Docs](https://nextjs.org/docs)
+- [React 19 Docs](https://react.dev)
+- [Tailwind CSS](https://tailwindcss.com/docs)
+- [TypeScript Handbook](https://www.typescriptlang.org/docs/)
 
 **RUST**:
-- [The Rust Book]([https://doc.rust-lang.org/book/](https://doc.rust-lang.org/book/))
-- [Rust by Example]([https://doc.rust-lang.org/rust-by-example/](https://doc.rust-lang.org/rust-by-example/))
-- [Actix Web Guide]([https://actix.rs/docs/](https://actix.rs/docs/))
-- [SQLx Documentation]([https://docs.rs/sqlx/latest/sqlx/](https://docs.rs/sqlx/latest/sqlx/))
+- [The Rust Book](https://doc.rust-lang.org/book/)
+- [Rust by Example](https://doc.rust-lang.org/rust-by-example/)
+- [Actix Web Guide](https://actix.rs/docs/)
+- [SQLx Documentation](https://docs.rs/sqlx/latest/sqlx/)
 
 **Go**:
-- [Go Tour]([https://go.dev/tour/](https://go.dev/tour/))
-- [Effective Go]([https://go.dev/doc/effective_go](https://go.dev/doc/effective_go))
-- [Fiber Framework]([https://docs.gofiber.io](https://docs.gofiber.io))
-- [GORM ORM]([https://gorm.io/docs/](https://gorm.io/docs/))
+- [Go Tour](https://go.dev/tour/)
+- [Effective Go](https://go.dev/doc/effective_go)
+- [Fiber Framework](https://docs.gofiber.io)
+- [GORM ORM](https://gorm.io/docs/)
 
 **DevOps**:
-- [Docker Documentation]([https://docs.docker.com](https://docs.docker.com))
-- [PostgreSQL Docs]([https://www.postgresql.org/docs/](https://www.postgresql.org/docs/))
-- [n8n Documentation]([https://docs.n8n.io/](https://docs.n8n.io/))
-- [Prometheus Docs]([https://prometheus.io/docs/](https://prometheus.io/docs/))
+- [Docker Documentation](https://docs.docker.com)
+- [PostgreSQL Docs](https://www.postgresql.org/docs/)
+- [n8n Documentation](https://docs.n8n.io/)
+- [Prometheus Docs](https://prometheus.io/docs/)
 
 ---
 
