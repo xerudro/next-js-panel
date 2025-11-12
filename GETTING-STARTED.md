@@ -471,14 +471,14 @@ docker volume prune
 
 ### Community Resources
 
-- **Next.js Discord**: [https://nextjs.org/discord](https://nextjs.org/discord)
-- **Rust Users Forum**: [https://users.rust-lang.org/](https://users.rust-lang.org/)
-- **Go Forum**: [https://forum.golangbridge.org/](https://forum.golangbridge.org/)
+- **Next.js Discord**: [Join the community](https://nextjs.org/discord)
+- **Rust Users Forum**: [Visit the forum](https://users.rust-lang.org/)
+- **Go Forum**: [Visit the forum](https://forum.golangbridge.org/)
 - **Stack Overflow**: Tag your questions appropriately
 
 ### Project Issues
 
-Create a GitHub issue: [https://github.com/xerudro/next-js-panel/issues](https://github.com/xerudro/next-js-panel/issues)
+Create a GitHub issue: [Open an issue](https://github.com/xerudro/next-js-panel/issues)
 
 ---
 
