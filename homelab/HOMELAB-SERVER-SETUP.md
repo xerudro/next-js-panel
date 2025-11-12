@@ -404,6 +404,13 @@ openssl rand -base64 48  # For JWT secret
 
 ### 3. Start All Services
 
+**Before starting, clean up unused Docker networks** (prevents subnet exhaustion):
+```bash
+# Remove unused networks
+docker network prune -f
+```
+
+Now start the services:
 ```bash
 # Make sure you're in the homelab directory
 cd /opt/next-js-panel/homelab  # or ~/next-js-panel/homelab
@@ -610,6 +617,27 @@ docker compose restart n8n
 docker stats
 
 # Add resource limits to docker-compose.yml (see Section 3.2 below)
+```
+
+**Network creation fails: "all predefined address pools have been fully subnetted":**
+```bash
+# This happens when Docker has exhausted its IP address ranges
+# Solution 1: Clean up unused networks (RECOMMENDED)
+docker network prune -f
+
+# Solution 2: Remove specific unused networks
+docker network ls
+docker network rm network_name
+
+# Solution 3: If you have many old containers/networks, clean everything
+docker system prune -a --volumes
+# WARNING: This removes ALL stopped containers, unused networks, and volumes
+
+# After cleanup, try starting services again
+docker compose up -d
+
+# Verify network was created with custom subnet
+docker network inspect homelab_hosting_network
 ```
 
 ---
