@@ -430,8 +430,8 @@ cat PRODUCT-BACKLOG.csv
 ```
 
 **Links**:
-- GitHub Repository: [https://github.com/xerudro/next-js-panel](https://github.com/xerudro/next-js-panel)
-- Issue Tracker: [https://github.com/xerudro/next-js-panel/issues](https://github.com/xerudro/next-js-panel/issues)
+- [GitHub Repository](https://github.com/xerudro/next-js-panel)
+- [Issue Tracker](https://github.com/xerudro/next-js-panel/issues)
 
 ---
 
