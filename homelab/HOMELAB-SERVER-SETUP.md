@@ -32,11 +32,18 @@ Complete guide for setting up and optimizing your Terra Office PC homelab server
 - **Architecture**: x86_64
 - **Virtualization**: VT-x enabled ✅
 
-**Recommendations for this CPU**:
-- ✅ Perfect for 5-10 Docker containers simultaneously
-- ✅ Can handle PostgreSQL + Redis + n8n + monitoring
-- ⚠️ Limit concurrent builds (use `-j2` or `-j3` for parallel builds)
-- ⚠️ Recommended RAM: 16-32GB (4GB per core minimum)
+**RAM**: 64GB DDR3/DDR4
+- **Type**: DDR3 or DDR4 (check with `sudo dmidecode --type memory | grep "Type:"`)
+- **Amount**: 64GB (16GB per core - excellent ratio!)
+- **Speed**: Check with `sudo dmidecode --type memory | grep "Speed:"`
+
+**System Balance Assessment**:
+- ✅ **Excellent RAM/CPU ratio** (16GB per core)
+- ✅ Perfect for 10-15 Docker containers simultaneously
+- ✅ Can run heavy PostgreSQL workloads + Redis + n8n + monitoring
+- ✅ Plenty of RAM for caching and buffers
+- ⚠️ CPU is the bottleneck, not RAM (limit concurrent builds to `-j3`)
+- ✅ 32GB swap is perfect (50% of RAM)
 
 ### Partition Layout
 
@@ -70,7 +77,34 @@ Free Space: ~175GB in LVM for future expansion
 
 ## 🚀 Initial System Setup
 
-### 1. Update System
+### 1. Check System Information
+
+Before starting, verify your hardware:
+
+```bash
+# Check RAM details
+sudo dmidecode --type memory | grep -A 20 "Memory Device" | grep -E "(Size|Type:|Speed:|Manufacturer)"
+
+# Quick RAM summary
+free -h
+
+# Check if DDR3 or DDR4
+sudo dmidecode --type memory | grep -i "type: ddr"
+
+# CPU details
+lscpu | grep -E "Model name|CPU\(s\)|MHz"
+
+# Storage details
+lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE
+df -hT
+```
+
+Expected output for your system:
+- **RAM**: 64GB DDR3 or DDR4
+- **CPU**: Intel(R) Core(TM) i5-6500 CPU @ 3.20GHz (4 cores)
+- **Storage**: ~1TB with LVM volumes
+
+### 2. Update System
 
 ```bash
 # Update package lists and upgrade all packages
@@ -235,18 +269,45 @@ Example for PostgreSQL in `docker-compose.yml`:
 services:
   postgres:
     image: postgres:16-alpine
-    cpus: "2.0"              # Limit to 2 cores max
-    mem_limit: 4g            # Limit memory
+    cpus: "2.0"              # Limit to 2 cores max (50% of 4 cores)
+    mem_limit: 20g           # Limit to 20GB (with 64GB RAM)
+    mem_reservation: 16g     # Reserve 16GB for shared_buffers
+    # ... rest of config
+
+  redis:
+    image: redis:7.2-alpine
+    cpus: "0.5"              # Limit to 0.5 cores
+    mem_limit: 4g            # Redis memory limit
+    mem_reservation: 2g      # Reserve 2GB
+    # ... rest of config
+
+  n8n:
+    image: n8nio/n8n:latest
+    cpus: "1.0"              # Limit to 1 core
+    mem_limit: 4g            # n8n memory limit
     mem_reservation: 2g      # Reserve 2GB
     # ... rest of config
 ```
 
-Recommended CPU allocation:
+Recommended resource allocation for 64GB RAM + 4 cores:
+
+**CPU limits:**
 - PostgreSQL: 2.0 CPUs (50%)
 - Redis: 0.5 CPUs (12.5%)
 - n8n: 1.0 CPUs (25%)
+- Prometheus: 0.5 CPUs
+- Grafana: 0.5 CPUs
 - Other services: 0.5 CPUs total
-- Leave 0.5-1.0 CPU for system
+
+**Memory limits:**
+- PostgreSQL: 20GB (31%)
+- Redis: 4GB (6%)
+- n8n: 4GB (6%)
+- Prometheus: 2GB (3%)
+- Grafana: 1GB (1.5%)
+- Adminer: 512MB
+- Redis Commander: 512MB
+- System: ~32GB free for OS cache and buffers
 
 ### 3. Add User to Docker Group
 
@@ -313,9 +374,9 @@ sudo tee /etc/sysctl.d/99-postgresql.conf > /dev/null <<'EOF'
 # PostgreSQL Performance Tuning
 
 # Shared memory settings (for PostgreSQL shared_buffers)
-# Set to ~25% of RAM (adjust based on your RAM)
-kernel.shmmax = 17179869184  # 16GB in bytes
-kernel.shmall = 4194304      # 16GB in pages (4KB pages)
+# Optimized for 64GB RAM system
+kernel.shmmax = 34359738368  # 32GB in bytes (50% of RAM)
+kernel.shmall = 8388608      # 32GB in pages (4KB pages)
 
 # Increase semaphore limits
 kernel.sem = 250 32000 100 128
@@ -358,15 +419,14 @@ cat > homelab/postgres-config/postgresql.conf <<'EOF'
 max_connections = 200
 superuser_reserved_connections = 5
 
-# MEMORY (optimized for 4-core i5-6500 system)
-# Adjust these values based on your actual RAM:
-# - 16GB RAM: shared_buffers=4GB, effective_cache_size=12GB
-# - 32GB RAM: shared_buffers=8GB, effective_cache_size=24GB
+# MEMORY (optimized for 64GB RAM + 4-core i5-6500 system)
+# With 64GB RAM, we can be generous with memory settings
 
-shared_buffers = 4GB                # 25% of RAM for 16GB system
-effective_cache_size = 12GB         # 75% of RAM for 16GB system
-work_mem = 16MB                     # RAM / max_connections (conservative for 4 cores)
-maintenance_work_mem = 512MB        # For VACUUM, CREATE INDEX (limited by 4 cores)
+shared_buffers = 16GB               # 25% of 64GB RAM
+effective_cache_size = 48GB         # 75% of 64GB RAM (OS will cache)
+work_mem = 64MB                     # Higher work_mem for complex queries
+maintenance_work_mem = 2GB          # For VACUUM, CREATE INDEX (limited by 4 cores)
+max_stack_depth = 7MB               # Default, safe value
 
 # CHECKPOINT
 checkpoint_completion_target = 0.9
