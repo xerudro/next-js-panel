@@ -362,7 +362,10 @@ On the server:
 ```bash
 # Make binaries executable
 chmod +x /opt/hosting-panel/api-gateway/api-gateway
-chmod +x /opt/hosting-panel/services/*/*/
+chmod +x /opt/hosting-panel/services/user-service/user-service
+chmod +x /opt/hosting-panel/services/billing-service/billing-service
+chmod +x /opt/hosting-panel/services/provisioning-service/provisioning-service
+chmod +x /opt/hosting-panel/services/email-service/email-service
 
 # Install frontend dependencies
 cd /opt/hosting-panel/frontend
