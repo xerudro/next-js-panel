@@ -33,7 +33,7 @@ ExecReload=/bin/kill -HUP $MAINPID
 # Restart policy
 Restart=always
 RestartSec=5
-StartLimitInterval=60
+StartLimitIntervalSec=60
 StartLimitBurst=3
 
 # Logging
